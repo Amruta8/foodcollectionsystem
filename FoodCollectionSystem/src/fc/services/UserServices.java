@@ -13,10 +13,11 @@ public class UserServices {
 	}
 	
 	public String loginAdmin(User user){
-		if(userDao.authenticateUser(user))
+		if(userDao.authenticateUser(user)){
 			user.setPassword(getRandomNumber()+"");
-		if(userDao.setToken(user))
-			return user.getPassword();
+			if(userDao.setToken(user))
+				return user.getPassword();
+		}			
 		return "-1";
 	}
 	/*This will generate the random number*/
@@ -29,6 +30,10 @@ public class UserServices {
 		randomNum =  1111111111 + i;
 		System.out.println("Random number generated as "+randomNum);
 		return randomNum;
+	}
+
+	public boolean credentialsCheck(User user) {
+		return userDao.credentialsCheck(user);
 	}
 	
 }

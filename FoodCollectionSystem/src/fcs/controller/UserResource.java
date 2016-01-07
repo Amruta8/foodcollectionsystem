@@ -15,6 +15,12 @@ import fcs.bean.User;
 
 @Path("/user")
 public class UserResource {
+	
+	UserServices userServices;
+	public UserResource() {
+		userServices = new UserServices();
+	}
+		
 	@POST
 	@Path("signUp")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -25,8 +31,7 @@ public class UserResource {
 	@GET
 	@Path("login")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User loginAdmin(@QueryParam("name") String name, @QueryParam("password") String password){
-		UserServices userServices = new UserServices();
+	public User loginAdmin(@QueryParam("name") String name, @QueryParam("password") String password){		
 		System.out.println(name+"###"+password);
 		User user = new User();
 		user.setName(name);
@@ -41,5 +46,12 @@ public class UserResource {
 		System.out.println("Into Signup method");
 		System.out.println(user.toString());
 		return user.getName();
+	}
+	
+	@GET
+	@Path("checkLogin")
+	public String credentialsCheck(@QueryParam("name") String name, @QueryParam("password") String password){
+		User user = new User(name, "", "", "", "", password);
+		return userServices.credentialsCheck(user)==true ? "true" : "false";
 	}
 }

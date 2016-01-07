@@ -6,6 +6,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class User {
 	String name,email,mobile,Address,dateOfBirth,password;
 
+	public User() {
+		
+	}
+	
+	public User(String name, String email, String mobile, String address,
+			String dateOfBirth, String password) {
+		super();
+		this.name = name;
+		this.email = email;
+		this.mobile = mobile;
+		Address = address;
+		this.dateOfBirth = dateOfBirth;
+		this.password = password;
+	}
+
 	public String getName() {
 		return name;
 	}

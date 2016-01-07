@@ -62,4 +62,19 @@ public class UserDao {
 	
 	}
 
+	public boolean credentialsCheck(User user) {
+		String sqlQuery = "select * from user where username ="+"\""+user.getName()+"\""+" and token=\""+user.getPassword()+"\" and role=\"admin\"";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+			ResultSet rs = preparedStatement.executeQuery();
+			while(rs.next()){
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 }
