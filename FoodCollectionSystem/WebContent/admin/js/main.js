@@ -27,17 +27,16 @@ $(document).ready(function(){
 			$.ajax({
 				url : "../fcs/user/signUp",
 				data : {
-					name : $("#uFName").val() +" "+$("#uLName").val(),
+					name : $("#uFName").val() ,
 					email : $("#uEmailId").val(),
 					mobile : $("#uContactNo").val(),
 					password : $("#password1").val()
 				},
-				type : "post",
+				type : "GET",
 				success : function(response){
 					console.log(response);
-				},
-				contentType: "application/json"
-				
+					alert(response);
+				}
 			});
 		}
 	});
