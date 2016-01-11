@@ -77,4 +77,20 @@ public class UserDao {
 		return false;
 	}
 
+	public String signupUser(User user) {
+		String sqlQuery = "insert into user(username,email,mobile,password) value(\""+user.getName()+"\",\""+user.getEmail()+"\",\""+user.getMobile()+"\",\""+user.getPassword()+"\")";
+		PreparedStatement preparedStatement;
+		try {
+			preparedStatement = connection.prepareStatement(sqlQuery);
+			System.out.println(sqlQuery);
+		//	System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+			preparedStatement.execute();
+			return "User registered successfully";
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Duplicate entry";
+		}
+	}
+
 }

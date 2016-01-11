@@ -39,13 +39,14 @@ public class UserResource {
 		user.setPassword(userServices.loginAdmin(user));
 		return user;
 	}
-	@POST
+	@GET
 	@Path("signUp")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public String signUpUser(User user){
+	public String signUpUser(@QueryParam("name") String name,@QueryParam("email") String email,@QueryParam("mobile") String mobile,@QueryParam("password") String password){
+		User user = new User(name, email, mobile, "", "", password);
+		userServices.signUpUser(user);
 		System.out.println("Into Signup method");
 		System.out.println(user.toString());
-		return user.getName();
+		return userServices.signUpUser(user);
 	}
 	
 	@GET

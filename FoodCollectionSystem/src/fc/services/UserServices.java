@@ -35,5 +35,9 @@ public class UserServices {
 	public boolean credentialsCheck(User user) {
 		return userDao.credentialsCheck(user);
 	}
+
+	public String signUpUser(User user) {
+		return userDao.signupUser(user);
+	}
 	
 }
