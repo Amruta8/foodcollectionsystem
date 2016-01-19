@@ -1,5 +1,8 @@
 package fcs.controller;
 
+import java.util.List;
+
+import javax.jws.soap.SOAPBinding.Use;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -43,7 +46,7 @@ public class UserResource {
 	@Path("signUp")
 	public String signUpUser(@QueryParam("name") String name,@QueryParam("email") String email,@QueryParam("mobile") String mobile,@QueryParam("password") String password){
 		User user = new User(name, email, mobile, "", "", password);
-		userServices.signUpUser(user);
+		//userServices.signUpUser(user);
 		System.out.println("Into Signup method");
 		System.out.println(user.toString());
 		return userServices.signUpUser(user);
@@ -54,5 +57,18 @@ public class UserResource {
 	public String credentialsCheck(@QueryParam("name") String name, @QueryParam("password") String password){
 		User user = new User(name, "", "", "", "", password);
 		return userServices.credentialsCheck(user)==true ? "true" : "false";
+	}
+	
+	/*the method to get all registered user*/
+	@GET
+	@Path("getRegistereduser")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<User> getRegistereduser(){
+		try{
+			return userServices.getRegistereduser();
+		}catch(Exception exception){
+			exception.printStackTrace();
+			return null;
+		}		
 	}
 }

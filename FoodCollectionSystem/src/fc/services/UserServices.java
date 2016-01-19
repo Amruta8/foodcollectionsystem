@@ -1,5 +1,6 @@
 package fc.services;
 
+import java.util.List;
 import java.util.Random;
 
 import fc.dao.UserDao;
@@ -38,6 +39,10 @@ public class UserServices {
 
 	public String signUpUser(User user) {
 		return userDao.signupUser(user);
+	}
+
+	public List<User> getRegistereduser() throws Exception {
+		return userDao.getRegisteredUser();
 	}
 	
 }

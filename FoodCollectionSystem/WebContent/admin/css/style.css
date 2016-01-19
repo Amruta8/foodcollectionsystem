@@ -3980,3 +3980,13 @@ h4.title3 {
 }
 }
 /*--//responsive-design---*/
+/*User Result list */
+.shriUserList div{
+	padding-left: 7%;
+    padding-right: 8%;	
+}
+.shriUserListBorder{
+	border-left-style: dotted;
+	border-color: #A7A79F;
+	
+}

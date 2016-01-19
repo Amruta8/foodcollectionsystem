@@ -42,6 +42,20 @@ $(document).ready(function(){
 	});
 	/*Signup the user : END*/
 	
+	/*List the registered user : START*/
+	$("#listRegUser").click(function(){
+		$.ajax({
+			url : "../fcs/user/getRegistereduser",
+			dataType : "application/json",
+			type : "GET",
+			success : function(response){
+				console.log(response);
+				alert(response);
+			}
+		});
+	});
+	/*List the registered user : END*/
+	
 });
 
 function validateFields(){

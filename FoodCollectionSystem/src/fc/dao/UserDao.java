@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import fc.provider.ConnectionProvider;
 import fcs.bean.User;
@@ -91,6 +93,27 @@ public class UserDao {
 			e.printStackTrace();
 			return "Duplicate entry";
 		}
+	}
+
+	public List<User> getRegisteredUser() throws Exception{
+		String sqlQuery = "select * from user where email not in (select  email from user where role='admin')";
+		List<User> userList = new ArrayList<User>();
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+			ResultSet rs = preparedStatement.executeQuery();			
+			while(rs.next()){
+				User user = new User();
+				user.setName(rs.getString("username"));
+				user.setMobile(rs.getString("mobile"));
+				user.setEmail(rs.getString("email"));
+				userList.add(user);
+			}
+		} catch(SQLException exception){
+			exception.printStackTrace();
+			throw exception;
+		}
+		return userList;
 	}
 
 }
