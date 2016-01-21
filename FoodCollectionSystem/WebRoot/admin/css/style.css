@@ -3990,3 +3990,25 @@ h4.title3 {
 	border-color: #A7A79F;
 	
 }
+
+table {
+    width:100%;
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+table.names tr:nth-child(even) {
+    background-color: #eee;
+}
+table.names tr:nth-child(odd) {
+   background-color:#fff;
+}
+table.names th	{
+    background-color: black;
+    color: white
+}
