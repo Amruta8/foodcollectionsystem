@@ -18,109 +18,107 @@ public class FCSUtil {
 	 * Output: status and ResourcesAllocated Info : This method analyse the
 	 * requested quantity and allocate the resource to it
 	 */
-	public ResourceAllocationBean resourceAllocation(
-			String requestedQuentityParam, Map<String, Integer> resWithinGeo,
-			Map<String, Integer> resOutsideGeo) {
-		String status = FCSConstants.ALLOCATION_STATUS_NA;
-		List<String> allocatedResources = new ArrayList<String>();
-		Integer requestedQuentity = Integer.parseInt(requestedQuentityParam);
+	public ResourceAllocationBean resourceAllocation(String requestedQuentityParam, Map<String, Integer> resWithinGeo, Map<String, Integer> resOutsideGeo) {
+		try {
+			String status = FCSConstants.ALLOCATION_STATUS_NA;
+			List<String> allocatedResources = new ArrayList<String>();
+			Integer requestedQuentity = Integer.parseInt(requestedQuentityParam);
 
-		/* Sorted Within Geo resources */
-		ValueComparator bvcWithinGeo = new ValueComparator(resWithinGeo);
-		TreeMap<String, Integer> sorted_mapWithinGeo = new TreeMap(bvcWithinGeo);
-		sorted_mapWithinGeo.putAll(resWithinGeo);
+			/* Sorted Within Geo resources */
+			ValueComparator bvcWithinGeo = new ValueComparator(resWithinGeo);
+			TreeMap<String, Integer> sorted_mapWithinGeo = new TreeMap(bvcWithinGeo);
+			sorted_mapWithinGeo.putAll(resWithinGeo);
 
-		/* Sorted outside Geo resources */
-		ValueComparator bvcOutsideGeo = new ValueComparator(resOutsideGeo);
-		TreeMap<String, Integer> sorted_mapOutsideGeo = new TreeMap(
-				bvcOutsideGeo);
-		sorted_mapOutsideGeo.putAll(resOutsideGeo);
-		int totalWGcapacity = 0;
+			/* Sorted outside Geo resources */
+			ValueComparator bvcOutsideGeo = new ValueComparator(resOutsideGeo);
+			TreeMap<String, Integer> sorted_mapOutsideGeo = new TreeMap(bvcOutsideGeo);
+			sorted_mapOutsideGeo.putAll(resOutsideGeo);
+			int totalWGcapacity = 0;
 
-		for (Map.Entry<String, Integer> entry : sorted_mapWithinGeo.entrySet()) {
-			Integer value = entry.getValue();
-			totalWGcapacity = totalWGcapacity + value;
-		}
-		if (totalWGcapacity >= requestedQuentity)
-			while (totalWGcapacity <= 0) {
-				boolean isFound = false;
-				String lastKey = "";
-
-				for (Map.Entry<String, Integer> entry : sorted_mapWithinGeo
-						.entrySet()) {
-					String key = entry.getKey();
-					Integer value = entry.getValue();
-					if (requestedQuentity < value) {
-						isFound = true;
-						allocatedResources.add(key);
-						// sorted_mapWithinGeo.remove(key);
-						totalWGcapacity = totalWGcapacity - value;
-						System.out.println("inside GEO AllocatedResource is :"
-								+ key + " => " + value);
-						status = FCSConstants.ALLOCATION_STATUS_ALLOCATED_WG;
-						lastKey = key;
-						break;
-					}
-				}
-				if (!isFound) {
-					allocatedResources.add(lastKey);
-					// sorted_mapWithinGeo.remove(key);
-					totalWGcapacity = totalWGcapacity
-							- sorted_mapWithinGeo.get(lastKey);
-					System.out
-							.println("inside GEO AllocatedResource last element is :"
-									+ lastKey
-									+ " => "
-									+ sorted_mapOutsideGeo.get(lastKey));
-					status = FCSConstants.ALLOCATION_STATUS_ALLOCATED_WG;
-				}
-			}
-		
-		/*Resources of Outside Geo Fances */
-		if (status.equals(FCSConstants.ALLOCATION_STATUS_NA)) {
-			int totalOGcapacity = 0;
-			for (Map.Entry<String, Integer> entry : sorted_mapOutsideGeo.entrySet()) {
+			for (Map.Entry<String, Integer> entry : sorted_mapWithinGeo.entrySet()) {
 				Integer value = entry.getValue();
-				totalOGcapacity = totalOGcapacity + value;
+				totalWGcapacity = totalWGcapacity + value;
 			}
-			if (totalOGcapacity >= requestedQuentity)
-				while (totalOGcapacity <= 0) {
+			if (totalWGcapacity >= requestedQuentity)
+				while (requestedQuentity > 0) {
 					boolean isFound = false;
 					String lastKey = "";
-	
-					for (Map.Entry<String, Integer> entry : sorted_mapOutsideGeo
-							.entrySet()) {
+
+					for (Map.Entry<String, Integer> entry : sorted_mapWithinGeo.entrySet()) {
 						String key = entry.getKey();
 						Integer value = entry.getValue();
-						if (requestedQuentity < value) {
+						if (requestedQuentity <= value) {
 							isFound = true;
 							allocatedResources.add(key);
-							// sorted_mapOutsideGeo.remove(key);
-							totalOGcapacity = totalOGcapacity - value;
-							System.out.println("inside GEO AllocatedResource is :"
-									+ key + " => " + value);
-							status = FCSConstants.ALLOCATION_STATUS_ALLOCATED_OG;
-							lastKey = key;
+							// sorted_mapWithinGeo.remove(key);
+							requestedQuentity = requestedQuentity - value;
+							System.out.println("inside GEO AllocatedResource is :"+ key + " => " + value);
+							status = FCSConstants.ALLOCATION_STATUS_ALLOCATED_WG;						
 							break;
 						}
+						lastKey = key;
 					}
 					if (!isFound) {
+						System.out.println(sorted_mapWithinGeo.lastEntry());
 						allocatedResources.add(lastKey);
-						// sorted_mapOutsideGeo.remove(key);
-						totalOGcapacity = totalOGcapacity
-								- sorted_mapOutsideGeo.get(lastKey);
-						System.out
-								.println("inside GEO AllocatedResource last element is :"
-										+ lastKey
-										+ " => "
-										+ sorted_mapOutsideGeo.get(lastKey));
-						status = FCSConstants.ALLOCATION_STATUS_ALLOCATED_OG;
-						sorted_mapOutsideGeo.remove(lastKey);
+						requestedQuentity = requestedQuentity- sorted_mapWithinGeo.lastEntry().getValue();
+						System.out.println("inside GEO AllocatedResource last element is :"+ lastKey+ " => "+sorted_mapWithinGeo.lastEntry().getValue());
+						status = FCSConstants.ALLOCATION_STATUS_ALLOCATED_WG;						
+						resWithinGeo.remove(lastKey);
+						ValueComparator bvcWithinGeo1 = new ValueComparator(resWithinGeo);
+						TreeMap<String, Integer> sorted_mapWithinGeo1 = new TreeMap(bvcWithinGeo1);
+						sorted_mapWithinGeo1.putAll(resWithinGeo);
+						sorted_mapWithinGeo = sorted_mapWithinGeo1;
+						
 					}
 				}
-		}
-		if (!status.equals(FCSConstants.ALLOCATION_STATUS_NA)) {
-			return new ResourceAllocationBean(status, allocatedResources);
+			
+			/*Resources of Outside Geo Fances */
+			if (status.equals(FCSConstants.ALLOCATION_STATUS_NA)) {
+				int totalOGcapacity = 0;
+				for (Map.Entry<String, Integer> entry : sorted_mapOutsideGeo.entrySet()) {
+					Integer value = entry.getValue();
+					totalOGcapacity = totalOGcapacity + value;
+				}
+				if (totalOGcapacity >= requestedQuentity)
+					while (requestedQuentity > 0) {
+						boolean isFound = false;
+						String lastKey = "";
+
+						for (Map.Entry<String, Integer> entry : sorted_mapOutsideGeo.entrySet()) {
+							String key = entry.getKey();
+							Integer value = entry.getValue();
+							if (requestedQuentity < value) {
+								isFound = true;
+								allocatedResources.add(key);
+								// sorted_mapOutsideGeo.remove(key);
+								requestedQuentity = requestedQuentity - value;
+								System.out.println("inside GEO AllocatedResource is :"+ key + " => " + value);
+								status = FCSConstants.ALLOCATION_STATUS_ALLOCATED_OG;							
+								break;
+							}
+							lastKey = key;
+						}
+						if (!isFound) {
+							System.out.println(sorted_mapOutsideGeo.lastEntry());
+							allocatedResources.add(lastKey);
+							requestedQuentity = requestedQuentity- sorted_mapOutsideGeo.lastEntry().getValue();
+							System.out.println("outside GEO AllocatedResource last element is :"+ lastKey+ " => "+sorted_mapOutsideGeo.lastEntry().getValue());
+							status = FCSConstants.ALLOCATION_STATUS_ALLOCATED_OG;							
+							resOutsideGeo.remove(lastKey);
+							System.out.println(resOutsideGeo);
+							ValueComparator bvcOutsideGeo1 = new ValueComparator(resOutsideGeo);
+							TreeMap<String, Integer> sorted_OutsideGeo1 = new TreeMap(bvcOutsideGeo1);
+							sorted_OutsideGeo1.putAll(resOutsideGeo);
+							sorted_mapOutsideGeo = sorted_OutsideGeo1;
+						}
+					}
+			}
+			if (!status.equals(FCSConstants.ALLOCATION_STATUS_NA)) {
+				return new ResourceAllocationBean(status, allocatedResources);
+			}			
+		} catch (Exception e) {			
+			e.printStackTrace();
 		}
 		return null;
 	}

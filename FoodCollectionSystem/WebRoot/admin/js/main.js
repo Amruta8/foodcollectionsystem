@@ -36,6 +36,7 @@ $(document).ready(function(){
 				success : function(response){
 					console.log(response);
 					alert(response);
+					window.location.replace('./signup.html');
 				}
 			});
 		}
@@ -59,7 +60,10 @@ $(document).ready(function(){
 				}				
 				var htmlToRender1 = '<table id="t01" class="names"><tr><th>Sr No</th><th>Name</th><th>Contact No</th><th>Email Id</th><th>Status</th><th>Edit Button</th><th>Delete Button</th></tr>';
 				for(var i=0;i<response.user.length;i++){
-					htmlToRender1= htmlToRender1 +'<tr><td>'+(i+1)+'</td><td>'+response.user[i].name+'</td><td>'+response.user[i].mobile+'</td><td>'+response.user[i].email+'</td><td>Yet to update</td><td>Edit</td><td>Delete</td></tr>';
+					htmlToRender1= htmlToRender1 +'<tr><td>'+(i+1)+'</td><td>'+response.user[i].name+'</td><td>'+response.user[i].mobile+'</td><td>'+response.user[i].email+'</td><td>'+response.user[i].status+'</td><td>Edit</td><td>Delete</td></tr>';
+				}
+				if(response.user.name!=undefined){
+					htmlToRender1= htmlToRender1 +'<tr><td>'+1+'</td><td>'+response.user.name+'</td><td>'+response.user.mobile+'</td><td>'+response.user.email+'</td><td>'+response.user.status+'</td><td>Edit</td><td>Delete</td></tr>';
 				}
 				htmlToRender1= htmlToRender1 + '</table>';
 				
