@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class User {
-	String name,email,mobile,Address,dateOfBirth,password;
+	String name,email,mobile,Address,dateOfBirth,password,status;
 	
 	public User() {
 		
@@ -67,13 +67,21 @@ public class User {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}	
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	@Override
 	public String toString() {
 		return "User [name=" + name + ", email=" + email + ", mobile=" + mobile
 				+ ", Address=" + Address + ", dateOfBirth=" + dateOfBirth
-				+ ", password=" + password + "]";
+				+ ", password=" + password + ", status=" + status + "]";
 	}
 	
 }

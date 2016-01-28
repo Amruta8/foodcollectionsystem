@@ -81,11 +81,13 @@ public class UserDao {
 
 	public String signupUser(User user) {
 		String sqlQuery = "insert into user(username,email,mobile,password) value(\""+user.getName()+"\",\""+user.getEmail()+"\",\""+user.getMobile()+"\",\""+user.getPassword()+"\")";
+		String sqlQueryCollector = "insert into collector_availability(user_email,status) value(\""+user.getEmail()+"\",\"Ideal\")";
 		PreparedStatement preparedStatement;
 		try {
 			preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery);
-		//	System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+			preparedStatement.execute();
+			preparedStatement = connection.prepareStatement(sqlQueryCollector);
 			preparedStatement.execute();
 			return "User registered successfully";
 		} catch (SQLException e) {
@@ -96,7 +98,7 @@ public class UserDao {
 	}
 
 	public List<User> getRegisteredUser() throws Exception{
-		String sqlQuery = "select * from user where email not in (select  email from user where role='admin')";
+		String sqlQuery = "select * from user u, collector_availability ca where u.email = ca.user_email and u.email not in (select  email from user where role='admin' ) ";
 		List<User> userList = new ArrayList<User>();
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -107,6 +109,7 @@ public class UserDao {
 				user.setName(rs.getString("username"));
 				user.setMobile(rs.getString("mobile"));
 				user.setEmail(rs.getString("email"));
+				user.setStatus(rs.getString("status"));
 				userList.add(user);
 			}
 		} catch(SQLException exception){
