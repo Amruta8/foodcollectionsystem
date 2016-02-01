@@ -119,4 +119,29 @@ public class UserDao {
 		return userList;
 	}
 
+	public boolean deleteUser(String email) {
+		try {
+			String sqlQuery = "delete from user where email = \""+email+"\"";
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {			
+			e.printStackTrace();
+			return false;
+		}		
+		return true;
+	}
+
+	public boolean updateUser(User user) {		
+		String sqlQuery = "update user set mobile=\""+user.getMobile()+"\",username=\""+user.getName()+"\" where email=\""+user.getEmail()+"\"";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {			
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+
 }

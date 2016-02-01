@@ -68,4 +68,31 @@ public class UserResource {
 			return null;
 		}		
 	}
+	/*the methoddelete the */
+	@GET
+	@Path("deleteUser")
+	public String deleteUser(@QueryParam("email")String email){		
+		try{
+			if(userServices.deleteuser(email))
+				return "success";
+		}catch(Exception exception){
+			exception.printStackTrace();
+			return null;
+		}
+		return email;		
+	}
+	
+	/*update the user data */
+	@GET
+	@Path("updateUser")
+	public String updateUser(@QueryParam("email")String email, @QueryParam("name")String name,@QueryParam("mobile")String mobile){		
+		try{
+			if(userServices.updateUser(new User(name, email, mobile, "", "", "")));
+				return "success";
+		}catch(Exception exception){
+			exception.printStackTrace();
+			return null;
+		}
+		return email;		
+	}
 }

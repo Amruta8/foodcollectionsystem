@@ -44,5 +44,13 @@ public class UserServices {
 	public List<User> getRegistereduser() throws Exception {
 		return userDao.getRegisteredUser();
 	}
+
+	public boolean deleteuser(String email) {
+		return userDao.deleteUser(email);		
+	}
+
+	public boolean updateUser(User user) {
+		return userDao.updateUser(user);	
+	}
 	
 }

@@ -9,13 +9,13 @@ import fc.util.ValueComparator;
 
 public class MainClass {
 	public static void main(String args[]){
-		Map<String, Integer> wg = new HashMap<>();
+		Map<String, Integer> wg = new HashMap();
 		wg.put("Shrikant", 10);
 		wg.put("shri1",20);
 		/*wg.put("a", 50);
 		wg.put("b", 65);
 		wg.put("c", 98);*/
-		Map<String, Integer> og = new HashMap<>();
+		Map<String, Integer> og = new HashMap();
 		og.put("p1", 65);
 		og.put("p2", 25);
 		og.put("p3", 21);

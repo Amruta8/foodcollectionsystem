@@ -53,6 +53,9 @@ $(document).ready(function(){
 			},
 			success : function(response){
 				console.log(response);
+				if(response==null){
+					alert("There is no user registered yet!!");
+				}
 				$("#pageHeading").html("Collector List");
 				var htmlToRender = '<div class="sign-u "><div class="sign-up1" style="width: 7%; "><h4 maxLength="10">Sr No</h4></div><div class="sign-up1 " style="width: 30%; padding-left: 5%;"><h4>Name</h4></div><div class="sign-up1 " style="width: 20%; padding-left: 5%;"><h4>Contact No</h4></div><div class="sign-up1 " style="width: 25%; padding-left: 5%;"><h4>Email Id</h4></div><div class="sign-up1 " style="width: 16%; padding-left: 5%;"><h4>Status</h4><div class="clearfix"> </div></div>';
 				for(var i=0;i<response.user.length;i++){
@@ -60,15 +63,63 @@ $(document).ready(function(){
 				}				
 				var htmlToRender1 = '<table id="t01" class="names"><tr><th>Sr No</th><th>Name</th><th>Contact No</th><th>Email Id</th><th>Status</th><th>Edit Button</th><th>Delete Button</th></tr>';
 				for(var i=0;i<response.user.length;i++){
-					htmlToRender1= htmlToRender1 +'<tr><td>'+(i+1)+'</td><td>'+response.user[i].name+'</td><td>'+response.user[i].mobile+'</td><td>'+response.user[i].email+'</td><td>'+response.user[i].status+'</td><td>Edit</td><td>Delete</td></tr>';
+					htmlToRender1= htmlToRender1 +'<tr><td>'+(i+1)+'</td><td>'+response.user[i].name+'</td><td>'+response.user[i].mobile+'</td><td>'+response.user[i].email+'</td><td>'+response.user[i].status+'</td><td><input type="button" value="Edit" class="EditCollectorRecord"/></td><td><input type="button" class="deleteCollectorRecord" value="Delete"/></td></tr>';
 				}
 				if(response.user.name!=undefined){
-					htmlToRender1= htmlToRender1 +'<tr><td>'+1+'</td><td>'+response.user.name+'</td><td>'+response.user.mobile+'</td><td>'+response.user.email+'</td><td>'+response.user.status+'</td><td>Edit</td><td>Delete</td></tr>';
+					htmlToRender1= htmlToRender1 +'<tr><td>'+1+'</td><td>'+response.user.name+'</td><td>'+response.user.mobile+'</td><td>'+response.user.email+'</td><td>'+response.user.status+'</td><td><input type="button" value="Edit" class="EditCollectorRecord"/></td><td><input type="button" value="Delete" class="deleteCollectorRecord"/></td></tr>';
 				}
 				htmlToRender1= htmlToRender1 + '</table>';
 				
 				$("#mainTemplateBody").html(htmlToRender1);
 				$("#mainTemplateBody").css("width","100%");
+				/*Delete event registered by prashant*/
+				$(".deleteCollectorRecord").click(function(){
+					//alert("I am goinrg right");
+					$.ajax({
+						url : "../fcs/user/deleteUser",
+						type : "GET",
+						data : {
+							email : $($($($(this).parent()).parent()).children()[3]).html()
+						},
+						success : function(response){
+							if(response =="success"){
+								alert("The record has been deleted");
+							}else{
+								alert("Error occured, try again latter");
+							}
+							window.location.replace('./signup.html');
+						}
+					});
+				});
+				/*Edit Field enabling event*/
+				$('.EditCollectorRecord').click(function(){
+					console.log("current reference "+this);
+					 if($($($($(this).parent()).parent()).children()[1]).children().html()==undefined){
+						for(var i=1;i<3;i++){
+							$($($($(this).parent()).parent()).children()[i]).html('<input type="text" value="'+$($($($(this).parent()).parent()).children()[i]).html()+'">');
+						};
+						this.value="Update";
+					 }else{
+						 $.ajax({
+								url : "../fcs/user/updateUser",
+								type : "GET",
+								data : {
+									email : $($($($(this).parent()).parent()).children()[3]).html(),
+									name : $($($($(this).parent()).parent()).children()[1]).children().val(),
+									mobile : $($($($(this).parent()).parent()).children()[2]).children().val()
+								},
+								success : function(response){
+									if(response =="success"){
+										alert("The record has been updated");
+									}else{
+										alert("Error occured, try again latter");
+									}
+									window.location.replace('./signup.html');
+								}
+							});						 
+					 }
+				});
+				
 			}
 		});
 	});
