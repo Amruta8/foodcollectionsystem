@@ -30,8 +30,7 @@ public class ResourceAllocationBean {
 	
 	@Override
 	public String toString() {
-		return "ResourceAllocationBean [status=" + status
-				+ ", allocatedResourcesIds=" + allocatedResourcesIds + "]";
+		return "[ allocatedResourcesIds=" + allocatedResourcesIds + "]";
 	}
 	
 }

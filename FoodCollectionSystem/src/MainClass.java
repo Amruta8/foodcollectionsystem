@@ -21,6 +21,7 @@ public class MainClass {
 		og.put("p3", 21);
 		og.put("p4", 98);
 		FCSUtil fcsUtil= new FCSUtil();
-		System.out.println("Result ; "+fcsUtil.resourceAllocation("199",wg, og));
+		System.out.println("These users are allocated "+fcsUtil.resourceAllocation("15",wg, og));
+		
 	}
 }
