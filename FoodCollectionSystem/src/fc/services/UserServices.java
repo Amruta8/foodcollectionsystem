@@ -52,5 +52,9 @@ public class UserServices {
 	public boolean updateUser(User user) {
 		return userDao.updateUser(user);	
 	}
+
+	public boolean logout() {
+		return userDao.logout();
+	}
 	
 }

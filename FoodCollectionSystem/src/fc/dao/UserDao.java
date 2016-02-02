@@ -144,4 +144,17 @@ public class UserDao {
 		return true;
 	}
 
+	public boolean logout() {
+		String sqlQuery = "update user set token=\"-1\" where role=\"admin\"";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {			
+			e.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}
+
 }

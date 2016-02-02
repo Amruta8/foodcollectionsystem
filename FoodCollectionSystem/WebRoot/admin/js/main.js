@@ -125,6 +125,24 @@ $(document).ready(function(){
 	});
 	/*List the registered user : END*/
 	
+	/*Logout functionallaty : START*/
+	$("#logOut").click(function(){
+		 $.ajax({
+				url : "../fcs/user/logout",
+				type : "GET",
+				data : {},
+				success : function(response){
+					if(response =="success"){
+						alert("You have been logged out successfully!!");
+					}else{
+						alert("Error occured, try again latter");
+					}
+					window.location.replace('../../FoodCollectionSystem');
+				}
+			});	
+	});
+	/*Logout functionallaty : END*/
+	
 });
 
 function validateFields(){

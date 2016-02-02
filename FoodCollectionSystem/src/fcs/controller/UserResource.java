@@ -87,12 +87,26 @@ public class UserResource {
 	@Path("updateUser")
 	public String updateUser(@QueryParam("email")String email, @QueryParam("name")String name,@QueryParam("mobile")String mobile){		
 		try{
-			if(userServices.updateUser(new User(name, email, mobile, "", "", "")));
+			if(userServices.updateUser(new User(name, email, mobile, "", "", "")))
 				return "success";
 		}catch(Exception exception){
 			exception.printStackTrace();
 			return null;
-		}
-		return email;		
+		}	
+		return null;
+	}
+	
+	/*logout the user data */
+	@GET
+	@Path("logout")
+	public String logout(){		
+		try{
+			if(userServices.logout())
+				return "success";
+		}catch(Exception exception){
+			exception.printStackTrace();
+			return null;
+		}	
+		return null;
 	}
 }
