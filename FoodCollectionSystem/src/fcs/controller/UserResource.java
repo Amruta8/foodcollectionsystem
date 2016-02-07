@@ -1,11 +1,19 @@
 package fcs.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -107,6 +115,45 @@ public class UserResource {
 			exception.printStackTrace();
 			return null;
 		}	
+		return null;
+	}
+	@GET
+	@Path("address/{address}")
+	public List<String> getAddress(@PathParam("address")String address){
+		System.out.println("into address.............."+"https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyD_7jZK5UXt287KSmlC6Fga1_RTavxUX1M");
+		try {
+			URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?address="+address+"&key=AIzaSyD_7jZK5UXt287KSmlC6Fga1_RTavxUX1M");
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			//conn.setRequestProperty("Accept", "application/json");
+
+			if (conn.getResponseCode() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+						+ conn.getResponseCode()+conn.getResponseMessage());
+			}
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+				(conn.getInputStream())));
+
+			String output;
+			System.out.println("Output from Server .... \n");
+			while ((output = br.readLine()) != null) {
+				System.out.println(output);
+			}
+
+			conn.disconnect();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 }
