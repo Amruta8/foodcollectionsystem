@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class User {
-	String name,email,mobile,Address,dateOfBirth,password,status;
+	String name,email,mobile,Address,dateOfBirth,password,status,requestedQuantity,location;
 	
 	public User() {
 		
@@ -75,13 +75,31 @@ public class User {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}	
+
+	public String getRequestedQuantity() {
+		return requestedQuantity;
+	}
+
+	public void setRequestedQuantity(String requestedQuantity) {
+		this.requestedQuantity = requestedQuantity;
+	}
+	
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	@Override
 	public String toString() {
 		return "User [name=" + name + ", email=" + email + ", mobile=" + mobile
 				+ ", Address=" + Address + ", dateOfBirth=" + dateOfBirth
-				+ ", password=" + password + ", status=" + status + "]";
-	}
+				+ ", password=" + password + ", status=" + status
+				+ ", requestedQuantity=" + requestedQuantity + ", location="
+				+ location + "]";
+	}	
 	
 }

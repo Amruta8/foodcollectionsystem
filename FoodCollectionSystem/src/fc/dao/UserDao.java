@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mysql.jdbc.Statement;
+
 import fc.provider.ConnectionProvider;
 import fcs.bean.User;
 
@@ -155,6 +157,21 @@ public class UserDao {
 		}
 		
 		return true;
+	}
+
+	public String foodCollectionRequest(User user, String requestNumber) throws SQLException {
+		System.out.println("into UserDao.foodCollectionRequest");
+		try {
+			String sqlQuery = "insert into collection_request(req_name,req_location,req_address,req_contact,req_quantity,email,req_number) value(\""+user.getName()+"\",\""+user.getLocation()+"\",\""+user.getAddress()+"\",\""+user.getMobile()+"\",\""+user.getRequestedQuantity()+"\",\""+user.getEmail()+"\",\""+requestNumber+"\")";
+			System.out.println("final insert query"+sqlQuery);
+			PreparedStatement pstmt= connection.prepareStatement(sqlQuery);
+			pstmt.executeUpdate();
+			return requestNumber;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
 	}
 
 }

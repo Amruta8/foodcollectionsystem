@@ -117,20 +117,47 @@ function saveData(){
 			return;
 		}*/
 		$.ajax({
-			url : 'https://maps.googleapis.com/maps/api/geocode/json?address=pune india&key=AIzaSyD_7jZK5UXt287KSmlC6Fga1_RTavxUX1M',
+			url : 'https://maps.googleapis.com/maps/api/geocode/json?address='+$($("#address").children()[1]).children()[1].value+' '+$($("#address").children()[2]).children()[1].value+' '+$($("#address").children()[3]).children()[1].value+'&key=AIzaSyD_7jZK5UXt287KSmlC6Fga1_RTavxUX1M',
 			data : {
-					name 		 : $('#userName').val(),
-					userMsg  : $('#userMsg').val(),
-					mobileNumber : $('#userPhone').val(),
-					emailId  	 : $('#userEmail').val()					
+									
 					},
 			type : 'GET',
 			success : function(response){
 				if(response==""){
 					alert("Sorry for inconvenience, The Service is Down. Try After Some Time. ")
 				}else{
+					$.ajax({
+						url : "../fcs/user/theCollectionRequest",
+						data : {
+							name 		 : $('#userName').val(),
+							requestQuantity  : $('#userQuantity').val(),
+							mobileNumber : $('#userPhone').val(),
+							emailId  	 : $('#userEmail').val(),							
+							address : $($("#address").children()[0]).children()[1].value +" , "+$($("#address").children()[1]).children()[1].value +" , "+$($("#address").children()[2]).children()[1].value+ " , " +$($("#address").children()[3]).children()[1].value +" , Pin :" + $($("#address").children()[4]).children()[1].value,
+							location : response.results[0].geometry.location.lat+","+response.results[0].geometry.location.lng 
+							
+						},
+						type : "POST",
+						success : function(response){
+							if(response==""){
+								alert("Sorry for inconvenience, The Service is Down. Try After Some Time. ")
+							}else{
+									alert("Dear "+$("#userName").val()+" oue representive will contact you soon");
+									//location.replace("index.html");
+							}				
+						},
+						error : function(xhr, status, errorThrown){
+							alert("There is an error in request!!")
+							
+						}
+					});
+					
+					
+					
+					
+					
 						alert("Dear "+$('#userName').val()+" oue representive will contact you soon");
-						location.replace("index.html");
+						//location.replace("index.html");
 				}				
 			},
 			error : function(xhr, status, errorThrown){

@@ -156,4 +156,23 @@ public class UserResource {
 		}
 		return null;
 	}
+	
+	
+	@POST
+	@Path("theCollectionRequest")
+	public String foodCollectionRequest(@QueryParam("name")String name,@QueryParam("requestQuantity")String requestedQuentity,@QueryParam("mobileNumber")String mobileNumber,@QueryParam("emailId")String email, @QueryParam("address")String address,@QueryParam("location")String location){
+		System.out.println("in UserResource.foodCollectionRequest ");
+		User user = new User();
+		user.setName(name);
+		user.setRequestedQuantity(requestedQuentity);
+		user.setMobile(mobileNumber);
+		user.setEmail(email);
+		user.setAddress(address);
+		try{
+			return userServices.foodCollectionRequest(user);
+		}catch(Exception e){
+			e.printStackTrace();
+			return "-1";
+		}
+	}
 }

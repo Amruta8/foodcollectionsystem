@@ -1,5 +1,6 @@
 package fc.services;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
 
@@ -55,6 +56,10 @@ public class UserServices {
 
 	public boolean logout() {
 		return userDao.logout();
+	}
+
+	public String foodCollectionRequest(User user) throws SQLException {
+		return userDao.foodCollectionRequest(user,"REQ"+getRandomNumber());		
 	}
 	
 }
