@@ -49,8 +49,9 @@ public class UserResource {
 	}
 	@GET
 	@Path("signUp")
-	public String signUpUser(@QueryParam("name") String name,@QueryParam("email") String email,@QueryParam("mobile") String mobile,@QueryParam("password") String password){
+	public String signUpUser(@QueryParam("name") String name,@QueryParam("email") String email,@QueryParam("mobile") String mobile,@QueryParam("password") String password,@QueryParam("quantity")String quantity){
 		User user = new User(name, email, mobile, "", "", password);
+		user.setRequestedQuantity(quantity);
 		//userServices.signUpUser(user);
 		System.out.println("Into Signup method");
 		System.out.println(user.toString());
@@ -158,21 +159,36 @@ public class UserResource {
 	}
 	
 	
-	@POST
+	@GET
 	@Path("theCollectionRequest")
 	public String foodCollectionRequest(@QueryParam("name")String name,@QueryParam("requestQuantity")String requestedQuentity,@QueryParam("mobileNumber")String mobileNumber,@QueryParam("emailId")String email, @QueryParam("address")String address,@QueryParam("location")String location){
-		System.out.println("in UserResource.foodCollectionRequest ");
+		
 		User user = new User();
 		user.setName(name);
 		user.setRequestedQuantity(requestedQuentity);
 		user.setMobile(mobileNumber);
 		user.setEmail(email);
 		user.setAddress(address);
+		user.setLocation(location);
+		System.out.println("in UserResource.foodCollectionRequest: user "+user);
 		try{
 			return userServices.foodCollectionRequest(user);
 		}catch(Exception e){
 			e.printStackTrace();
 			return "-1";
+		}
+	}
+	
+	@GET
+	@Path("fetchRequestStatus")
+	public String foodCollectionRequestStatus(@QueryParam("requestId")String requestId){
+		
+		System.out.println("in UserResource.foodCollectionRequestStatus: requestId "+requestId);
+		try{
+			return userServices.foodCollectionRequestStatus(requestId);
+		}catch(Exception e){
+			e.printStackTrace();
+			return "Error Occured, try after some time!!";
 		}
 	}
 }

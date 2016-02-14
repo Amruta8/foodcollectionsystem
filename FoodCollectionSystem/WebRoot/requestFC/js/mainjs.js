@@ -2,51 +2,7 @@
   var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
   return regex.test(email);
 }
-function saveData(){
-		if(selectedRecord==undefined || !$("#"+selectedRecord).is(':checked')){
-			alert('Select a Tour');
-			return;
-		}
-		if($('#name'+selectedRecord).val()==''){
-			alert('Please Enter name');
-			return;
-		}
-		if($('#numberOfTourist'+selectedRecord).val()==''){
-			alert('Number of tourist must be atleast one');
-			return;
-		}
-		if($('#contactNumber'+selectedRecord).val()=='' || $('#contactNumber'+selectedRecord).val().length!=10){
-			alert('Enter valid Mobile Numebr');
-			return;
-		}
-		if($('#email'+selectedRecord).val()=='' || !isEmail($('#email'+selectedRecord).val())){
-			alert('Enter Valid Email');
-			return;
-		}
-		$.ajax({
-			url : 'getTourBooked',
-			data : {
-					name 		 : $('#name'+selectedRecord).val(),
-					noOfTourist  : $('#numberOfTourist'+selectedRecord).val(),
-					mobileNumber : $('#contactNumber'+selectedRecord).val(),
-					emailId  	 : $('#email'+selectedRecord).val(),
-					tourNo  	 : selectedRecord
-					},
-			type : 'POST',
-			success : function(response){
-				if(response==""){
-					alert("Sorry for inconvenience, The Service is Down. Try After Some Time. ")
-				}else{
-						alert("Dear "+$('#name'+selectedRecord).val()+" oue representive will contact you soon");
-				}				
-			},
-			error : function(xhr, status, errorThrown){
-				
-			}
-		});
-		console.log('entered');
-		return false;
-	}
+
 	$(document).ready(function(){		
 		$(".selectBox").click(function(){			
 			if($(this).is(':checked')){
@@ -96,6 +52,30 @@ function saveData(){
 		});
 		
 		
+		/*to fetch 	request information:START*/
+		
+		$("#getRequestStatus").click(function(){
+			$.ajax({
+				url : "../fcs/user/fetchRequestStatus",
+				data : {
+					requestId : $("#requestId").val()
+				},
+				type : "GET",
+				success : function(response){
+					if(response==""){
+						alert("Sorry for inconvenience, The Service is Down. Try After Some Time. ")
+					}else{
+						$("#requestStatus").html(response);
+					}				
+				},
+				error : function(xhr, status, errorThrown){
+					alert("There is an error in request!!")
+					
+				}
+			});
+		});
+		/*to fetch 	request information:END*/
+		
 	});
 	
 	/*To Store the Enquiry Information: START*/
@@ -137,12 +117,15 @@ function saveData(){
 							location : response.results[0].geometry.location.lat+","+response.results[0].geometry.location.lng 
 							
 						},
-						type : "POST",
+						type : "GET",
 						success : function(response){
-							if(response==""){
-								alert("Sorry for inconvenience, The Service is Down. Try After Some Time. ")
-							}else{
-									alert("Dear "+$("#userName").val()+" oue representive will contact you soon");
+							if(response=="" || response=="-1"){
+								alert("Sorry for inconvenience, The Service is Down. Try After Some Time. ");
+							}else if(response=="collectorCannotAssigned"){
+								alert("All the resources are busy right now, we cannot process you request");
+							}								
+							else{
+									alert("Dear "+$("#userName").val()+" your Request number is : "+response +". Please keep it safe for further enquiry");
 									//location.replace("index.html");
 							}				
 						},
@@ -150,14 +133,8 @@ function saveData(){
 							alert("There is an error in request!!")
 							
 						}
-					});
-					
-					
-					
-					
-					
-						alert("Dear "+$('#userName').val()+" oue representive will contact you soon");
-						//location.replace("index.html");
+					});	
+					//location.replace("index.html");
 				}				
 			},
 			error : function(xhr, status, errorThrown){
@@ -171,41 +148,7 @@ function saveData(){
 	/*To Store the Enquiry Information: END
 	*/
 	
-	/*this confirms the bus booking : START*/
-	/*function confirmBusBooking(var thisVar){
-		//return false;
-			console.log("In confirm bus booking")
-			var resultArr = [];
-				for(var i=0; i<$($(thisVar.parentElement.parentElement.parentElement.parentElement).find("label")).length ;i++){
-				console.log($($(thisVar.parentElement.parentElement.parentElement.parentElement).find("label")[i]).html());
-				resultArr.push($($(thisVar.parentElement.parentElement.parentElement.parentElement).find("label")[i]).html());	
-			}
-			for(var j=1;j<4;j++){
-				resultArr.push($($(thisVar.parentElement.parentElement.parentElement.parentElement).find("input")[j]).val());
-			}
-			resultArr.push($(thisVar.parentElement.parentElement.parentElement.parentElement).find("select").val());
-			$.ajax({
-				url : "contactUs",
-				data : {
-					data : resultArr
-				},
-				type : "POST",
-				success : function(response){
-					if(response==""){
-						alert("Sorry for inconvenience, The Service is Down. Try After Some Time. ")
-					}else{
-							alert("Dear "+$("#userName").val()+" oue representive will contact you soon");
-							//location.replace("index.html");
-					}				
-				},
-				error : function(xhr, status, errorThrown){
-					alert("There is an error in request!!")
-					
-				}
-			});	
-			return false;
-	}*/
-	/*this confirms the bus booking : END*/
+
 	
 	
 	

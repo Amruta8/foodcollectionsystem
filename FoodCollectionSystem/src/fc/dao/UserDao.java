@@ -5,8 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import com.constant.FCSConstants;
 import com.mysql.jdbc.Statement;
 
 import fc.provider.ConnectionProvider;
@@ -83,7 +87,7 @@ public class UserDao {
 
 	public String signupUser(User user) {
 		String sqlQuery = "insert into user(username,email,mobile,password) value(\""+user.getName()+"\",\""+user.getEmail()+"\",\""+user.getMobile()+"\",\""+user.getPassword()+"\")";
-		String sqlQueryCollector = "insert into collector_availability(user_email,status) value(\""+user.getEmail()+"\",\"Ideal\")";
+		String sqlQueryCollector = "insert into collector_availability(user_email,status,qty) value(\""+user.getEmail()+"\",\"Ideal\",\""+user.getRequestedQuantity()+"\")";
 		PreparedStatement preparedStatement;
 		try {
 			preparedStatement = connection.prepareStatement(sqlQuery);
@@ -159,10 +163,15 @@ public class UserDao {
 		return true;
 	}
 
-	public String foodCollectionRequest(User user, String requestNumber) throws SQLException {
-		System.out.println("into UserDao.foodCollectionRequest");
+	public String foodCollectionRequest(User user, String requestNumber, List<String> collectorDetails) throws SQLException {
+		System.out.println("into UserDao.foodCollectionRequest with user :"+user);
 		try {
-			String sqlQuery = "insert into collection_request(req_name,req_location,req_address,req_contact,req_quantity,email,req_number) value(\""+user.getName()+"\",\""+user.getLocation()+"\",\""+user.getAddress()+"\",\""+user.getMobile()+"\",\""+user.getRequestedQuantity()+"\",\""+user.getEmail()+"\",\""+requestNumber+"\")";
+			String sqlReqMappingQuery = "insert into request_mapping(RequestNo,collectorIds) values('"+requestNumber+"','"+collectorDetails+"')";
+			System.out.println("sqlReqMappingQuery final:"+sqlReqMappingQuery);
+			PreparedStatement pstmtRMQ = connection.prepareStatement(sqlReqMappingQuery);
+			pstmtRMQ.executeUpdate();
+			
+			String sqlQuery = "insert into collection_request(req_name,req_location,req_address,req_contact,req_quantity,email,req_number,status) value(\""+user.getName()+"\",\""+user.getLocation()+"\",\""+user.getAddress()+"\",\""+user.getMobile()+"\",\""+user.getRequestedQuantity()+"\",\""+user.getEmail()+"\",\""+requestNumber+"\",\""+FCSConstants.COLLECTION_REQUEST_ASSIGNED+"\")";
 			System.out.println("final insert query"+sqlQuery);
 			PreparedStatement pstmt= connection.prepareStatement(sqlQuery);
 			pstmt.executeUpdate();
@@ -174,4 +183,57 @@ public class UserDao {
 		
 	}
 
+	public Map<String, String> getAllActiveCollectore() {
+
+		Map<String, String> collector = new HashMap<String, String>();
+		String sqlQuery = "select * from collector_availability where status=\"Ideal\"";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+			ResultSet rs = preparedStatement.executeQuery();
+			while(rs.next()){
+				collector.put(rs.getString("user_email"), rs.getString("qty")+"#"+rs.getString("currentLocation"));				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return collector;
+	}
+
+	public boolean changeCollectorStatus(List<String> allocatedResourcesIds,String status) throws SQLException {
+		String idsToUpdate="";
+		for (int i = 0; i < allocatedResourcesIds.size(); i++) {
+			if(i==0){
+				idsToUpdate= "'"+allocatedResourcesIds.get(i)+"'";
+			}else{
+				idsToUpdate = idsToUpdate + ",'"+allocatedResourcesIds.get(i)+"'";
+			}
+		}
+		String query = "update collector_availability set status='"+status+"' where user_email in ("+idsToUpdate+")";
+		try {
+			PreparedStatement pstmt = connection.prepareStatement(query);
+			if(pstmt.executeUpdate()>0){
+				return true;			
+			}else{
+				return false;
+			}
+		} catch (SQLException e) {			
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
+	public String foodCollectionRequestStatus(String requestId) throws SQLException {
+		String query = "select status from collection_request where req_number='"+requestId+"'";
+		ResultSet rs;
+		try {
+			PreparedStatement preparedStatement  = connection.prepareStatement(query);
+			rs = preparedStatement.executeQuery();			
+		} catch (SQLException e) {			
+			e.printStackTrace();
+			throw e;
+		}
+		return rs.next() ? rs.getString("status") : "The request id is not present.Enter valid one";
+	}
 }

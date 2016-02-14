@@ -30,7 +30,8 @@ $(document).ready(function(){
 					name : $("#uFName").val() ,
 					email : $("#uEmailId").val(),
 					mobile : $("#uContactNo").val(),
-					password : $("#password1").val()
+					password : $("#password1").val(),
+					quantity : $("#uQuantity").val()
 				},
 				type : "GET",
 				success : function(response){

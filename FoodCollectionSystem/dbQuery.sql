@@ -19,13 +19,15 @@ USE `fcs_stage`;
 CREATE TABLE IF NOT EXISTS `collection_request` (
   `req_name` varchar(50) DEFAULT NULL,
   `req_location` varchar(50) DEFAULT NULL,
-  `req_address` varchar(50) DEFAULT NULL,
+  `req_address` varchar(500) DEFAULT NULL,
   `req_contact` varchar(50) DEFAULT NULL,
   `req_quantity` varchar(50) DEFAULT NULL,
-  `status` varchar(50) DEFAULT NULL
+  `status` varchar(50) DEFAULT NULL,
+  `email` varchar(50) DEFAULT NULL,
+  `req_number` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table fcs_stage.collection_request: ~0 rows (approximately)
+-- Dumping data for table fcs_stage.collection_request: ~7 rows (approximately)
 DELETE FROM `collection_request`;
 /*!40000 ALTER TABLE `collection_request` DISABLE KEYS */;
 /*!40000 ALTER TABLE `collection_request` ENABLE KEYS */;
@@ -40,17 +42,32 @@ CREATE TABLE IF NOT EXISTS `collector_availability` (
   `currentLocation` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Dumping data for table fcs_stage.collector_availability: ~6 rows (approximately)
+-- Dumping data for table fcs_stage.collector_availability: ~9 rows (approximately)
 DELETE FROM `collector_availability`;
 /*!40000 ALTER TABLE `collector_availability` DISABLE KEYS */;
 INSERT INTO `collector_availability` (`user_email`, `status`, `qty`, `maxDeleveryTime`, `currentLocation`) VALUES
-	('789@gmail.com', 'Ideal', NULL, NULL, NULL),
-	('123qew@gmail.com', 'Ideal', NULL, NULL, NULL),
-	('a@gmial.com', 'Ideal', NULL, NULL, NULL),
-	('b', 'Ideal', NULL, NULL, NULL),
-	('c', 'Ideal', NULL, NULL, NULL),
-	('d', 'Ideal', NULL, NULL, NULL);
+	('me.prashantghuge@gmail.com', 'Ideal', '25', NULL, '18.5635511,73.9325552'),
+	('jsr@gmail.com', 'Ideal', '250', NULL, '18.5073985,73.8076504'),
+	('ghuge@gmail.com', 'Ideal', '300', NULL, '18.4666576,73.8258668'),
+	('test1@gmail.com', 'Ideal', '200', NULL, '18.5308225,73.8474647'),
+	('132@.sd', 'Ideal', '110', NULL, '18.5934685,73.79291119999999'),
+	('shri@gmail.com', 'Ideal', '86', NULL, '18.5514501,73.9347856'),
+	('test2@gmail.com', 'Ideal', '100', NULL, '18.6297811,73.7997094'),
+	('t3@gmail.com', 'Ideal', '50', NULL, '18.6297811,73.7997094'),
+	('t4@gmail.com', 'Ideal', '12', NULL, '18.6297811,73.7997094');
 /*!40000 ALTER TABLE `collector_availability` ENABLE KEYS */;
+
+
+-- Dumping structure for table fcs_stage.request_mapping
+CREATE TABLE IF NOT EXISTS `request_mapping` (
+  `RequestNo` varchar(50) DEFAULT NULL,
+  `collectorIds` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table fcs_stage.request_mapping: ~0 rows (approximately)
+DELETE FROM `request_mapping`;
+/*!40000 ALTER TABLE `request_mapping` DISABLE KEYS */;
+/*!40000 ALTER TABLE `request_mapping` ENABLE KEYS */;
 
 
 -- Dumping structure for table fcs_stage.user
@@ -64,26 +81,20 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table fcs_stage.user: ~16 rows (approximately)
+-- Dumping data for table fcs_stage.user: ~10 rows (approximately)
 DELETE FROM `user`;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` (`username`, `password`, `token`, `role`, `email`, `mobile`) VALUES
-	('1123', NULL, '123', NULL, '1', ''),
-	('123', '123', NULL, NULL, '123', '123'),
-	('123', '123', NULL, NULL, '1234', '123'),
-	('123', '123', NULL, NULL, '12345', '123'),
-	('123', '123', NULL, NULL, '123456', '123'),
-	('123', '123', NULL, NULL, '1234567', '123'),
-	('123', '123', NULL, NULL, '123789', '123'),
-	('admin', 'shri', '1049995772', 'admin', '2', ''),
-	('shrikant', NULL, NULL, NULL, '3', ''),
-	('asd', 'asd', NULL, NULL, 'asd1', 'asd'),
-	('shrikant', 'b', NULL, NULL, 'b', '132312'),
-	('c', 'c', NULL, NULL, 'c', 'c'),
-	('d', 'd', NULL, NULL, 'd', 'd'),
-	('prashant ', '789789789', NULL, NULL, 'ghuge.prashant213@gmail.com', '7897897898'),
-	('shrikant', 'lkj', NULL, NULL, 'ghuge@gmail.com', '12346'),
-	('shrikant', 'qwe', NULL, NULL, 'qwe@gmail.com', '1231231233');
+	('test2', 'qwe', NULL, NULL, '132@.sd', '132'),
+	('admin', 'shri', '1117380063', 'admin', '2', ''),
+	('shrikant', 'shri', NULL, NULL, 'ghuge@gmail.com', '7987987984'),
+	('Jai Shri', 'shrikant', NULL, NULL, 'jsr@gmail.com', '7897987987'),
+	('Prashant', 'prashant', NULL, NULL, 'me.prashantghuge@gmail.com', '7709582219'),
+	('shrikant', '798', NULL, NULL, 'shri@gmail.com', '798'),
+	('test3up', '789', NULL, NULL, 't3@gmail.com', '798'),
+	('test4', '132', NULL, NULL, 't4@gmail.com', '7987987987'),
+	('Test1', '123', NULL, NULL, 'test1@gmail.com', '132'),
+	('test2', '132', NULL, NULL, 'test2@gmail.com', '132');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
