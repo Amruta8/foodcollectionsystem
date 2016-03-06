@@ -186,7 +186,8 @@ public class UserDao {
 	public Map<String, String> getAllActiveCollectore() {
 
 		Map<String, String> collector = new HashMap<String, String>();
-		String sqlQuery = "select * from collector_availability where status=\"Ideal\"";
+		String sqlQuery = "select * from collector_availability where status=\"collectionRequestAssigned\"";
+		//select ca.user_email as user_email,ca.currentLocation as currentLocation , () from collector_availability ca, request_mapping rm, collection_request cr where status="Idle" and ca.user_email =rm.collectorIds and rm.RequestNo = cr.req_number
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());

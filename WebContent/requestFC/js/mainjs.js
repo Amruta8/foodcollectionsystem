@@ -1,4 +1,4 @@
-﻿function isEmail(email) {
+﻿﻿function isEmail(email) {
   var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
   return regex.test(email);
 }
@@ -127,21 +127,23 @@
 							else{
 									alert("Dear "+$("#userName").val()+" your Request number is : "+response +". Please keep it safe for further enquiry");
 									//location.replace("index.html");
-							}				
+							}
+							location.replace('./contact.html');
 						},
 						error : function(xhr, status, errorThrown){
 							alert("There is an error in request!!")
 							
 						}
 					});	
-					//location.replace("index.html");
-				}				
+					
+				}					
 			},
 			error : function(xhr, status, errorThrown){
 				alert('There is an error in request!!')
 				
 			}
 		});
+		
 		console.log('entered');
 		return false;
 	}
