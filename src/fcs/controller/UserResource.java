@@ -77,12 +77,38 @@ public class UserResource {
 			return null;
 		}		
 	}
-	/*the methoddelete the */
+	/*the method to get all registered user*/
+	@GET
+	@Path("getCollectionRequest")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<User> getCollectionRequest(){
+		try{
+			return userServices.getCollectionRequest();
+		}catch(Exception exception){
+			exception.printStackTrace();
+			return null;
+		}		
+	}
+	/*the methoddelete the user */
 	@GET
 	@Path("deleteUser")
 	public String deleteUser(@QueryParam("email")String email){		
 		try{
 			if(userServices.deleteuser(email))
+				return "success";
+		}catch(Exception exception){
+			exception.printStackTrace();
+			return null;
+		}
+		return email;		
+	}
+	
+	/*the method delete the FC req*/
+	@GET
+	@Path("deleteFCReq")
+	public String deleteFCReq(@QueryParam("request_no")String email){		
+		try{
+			if(userServices.deleteFCReq(email))
 				return "success";
 		}catch(Exception exception){
 			exception.printStackTrace();

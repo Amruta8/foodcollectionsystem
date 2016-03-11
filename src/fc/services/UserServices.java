@@ -56,9 +56,17 @@ public class UserServices {
 	public List<User> getRegistereduser() throws Exception {
 		return userDao.getRegisteredUser();
 	}
+	
+	public List<User> getCollectionRequest() throws Exception {
+		return userDao.getCollectionRequest();
+	}
 
 	public boolean deleteuser(String email) {
 		return userDao.deleteUser(email);		
+	}
+	
+	public boolean deleteFCReq(String email) {
+		return userDao.deleteFCReq(email);		
 	}
 
 	public boolean updateUser(User user) {
@@ -107,5 +115,5 @@ public class UserServices {
 	public String foodCollectionRequestStatus(String requestId) throws SQLException {
 		return userDao.foodCollectionRequestStatus(requestId);
 	}
-	
+
 }

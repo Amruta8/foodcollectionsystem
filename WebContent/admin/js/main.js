@@ -12,7 +12,7 @@ $(document).ready(function(){
 			},
 			success : function(response){
 				if(response=="false"){
-					window.location.replace('./error.html');
+					window.location.replace('../requestFC/404.html');
 				}
 			}
 		});
@@ -125,6 +125,55 @@ $(document).ready(function(){
 		});
 	});
 	/*List the registered user : END*/
+	/*List the collection request : START*/
+	$("#listCollReq").click(function(){
+		$.ajax({
+			url : "../fcs/user/getCollectionRequest",
+			type : "GET",
+			data : {
+				
+			},
+			success : function(response){
+				console.log(response);
+				if(response==null){
+					alert("There is no collection request yet!!");
+				}
+				$("#pageHeading").html("Collection Request");							
+				var htmlToRender1 = '<table id="t01" class="names"><tr><th>Request No</th><th>Name</th><th>Contact No</th><th>Email Id</th><th>Quantity</th><th>Address</th><th>Status</th><th>Cancel Request</th></tr>';
+				for(var i=0;i<response.user.length;i++){
+					htmlToRender1= htmlToRender1 +'<tr><td>'+response.user[i].dateOfBirth+'</td><td>'+response.user[i].name+'</td><td>'+response.user[i].mobile+'</td><td>'+response.user[i].email+'</td><td>'+response.user[i].requestedQuantity+'</td><td>'+response.user[i].location+'</td><td>'+response.user[i].status+'</td><td><input type="button" class="deleteCollectorRecord" value="Cancel"/></td></tr>';
+				}
+				if(response.user.name!=undefined){
+					htmlToRender1= htmlToRender1 +'<tr><td>'+response.user.dateOfBirth+'</td><td>'+response.user.name+'</td><td>'+response.user.mobile+'</td><td>'+response.user.email+'</td><td>'+response.user.requestedQuantity+'</td><td>'+response.user.location+'</td><td>'+response.user.status+'</td><td><input type="button" class="deleteCollectorRecord" value="Cancel"/></td></tr>';
+				}
+				htmlToRender1= htmlToRender1 + '</table>';
+				
+				$("#mainTemplateBody").html(htmlToRender1);
+				$("#mainTemplateBody").css("width","100%");	
+				
+				$(".deleteCollectorRecord").click(function(){
+					//alert("I am goinrg right");
+					$.ajax({
+						url : "../fcs/user/deleteFCReq",
+						type : "GET",
+						data : {
+							request_no : $($($($(this).parent()).parent()).children()[0]).html()
+						},
+						success : function(response){
+							if(response =="success"){
+								alert("The record has been deleted");
+							}else{
+								alert("Error occured, try again latter");
+							}
+							window.location.replace('./signup.html');
+						}
+					});
+				});
+				
+			}
+		});
+	});
+	/*List the collection request : END*/
 	
 	/*Logout functionallaty : START*/
 	$("#logOut").click(function(){
@@ -138,7 +187,7 @@ $(document).ready(function(){
 					}else{
 						alert("Error occured, try again latter");
 					}
-					window.location.replace('../../FoodCollectionSystem');
+					window.location.replace('../');
 				}
 			});	
 	});

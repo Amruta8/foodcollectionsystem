@@ -124,12 +124,57 @@ public class UserDao {
 		}
 		return userList;
 	}
-
+	
+	public List<User> getCollectionRequest() throws Exception{
+		String sqlQuery = "select * from collection_request where status not in('"+FCSConstants.REQUEST_FULLFILLED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
+		List<User> userList = new ArrayList<User>();
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			ResultSet rs = preparedStatement.executeQuery();	
+			System.out.println(sqlQuery +"and execute query result is :"+rs);					
+			while(rs.next()){
+				User user = new User();
+				user.setDateOfBirth(rs.getString("req_number"));
+				user.setName(rs.getString("req_name"));
+				user.setMobile(rs.getString("req_contact"));
+				user.setEmail(rs.getString("email"));
+				user.setStatus(rs.getString("status"));
+				user.setLocation(rs.getString("req_address"));
+				user.setRequestedQuantity(rs.getString("req_quantity"));
+				userList.add(user);
+			}
+		} catch(SQLException exception){
+			exception.printStackTrace();
+			throw exception;
+		}
+		return userList;
+	}
+	
 	public boolean deleteUser(String email) {
 		try {
 			String sqlQuery = "delete from user where email = \""+email+"\"";
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			preparedStatement.executeUpdate();
+		} catch (SQLException e) {			
+			e.printStackTrace();
+			return false;
+		}		
+		return true;
+	}
+	
+	public boolean deleteFCReq(String reqNo) {
+		try {
+			String sqlQuery = "delete from request_mapping where RequestNo = \""+reqNo.trim()+"\"";
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			preparedStatement.executeUpdate();
+			
+			String sqlQuery2 = "update collection_request  set status='"+FCSConstants.REQUEST_CANCELLED+"' where req_number= \""+reqNo.trim()+"\"";
+			PreparedStatement preparedStatement2 = connection.prepareStatement(sqlQuery2);
+			preparedStatement2.executeUpdate();
+			
+			String sqlQuery3 = "update collector_availability set status =\"Idle\" where user_email not in (select collectorids from request_mapping)";
+			PreparedStatement preparedStatement3 = connection.prepareStatement(sqlQuery3);
+			preparedStatement3.executeUpdate();
 		} catch (SQLException e) {			
 			e.printStackTrace();
 			return false;
@@ -166,10 +211,13 @@ public class UserDao {
 	public String foodCollectionRequest(User user, String requestNumber, List<String> collectorDetails) throws SQLException {
 		System.out.println("into UserDao.foodCollectionRequest with user :"+user);
 		try {
-			String sqlReqMappingQuery = "insert into request_mapping(RequestNo,collectorIds) values('"+requestNumber+"','"+collectorDetails+"')";
-			System.out.println("sqlReqMappingQuery final:"+sqlReqMappingQuery);
-			PreparedStatement pstmtRMQ = connection.prepareStatement(sqlReqMappingQuery);
-			pstmtRMQ.executeUpdate();
+			for (int i = 0; i < collectorDetails.size(); i++) {
+				String sqlReqMappingQuery = "insert into request_mapping(RequestNo,collectorIds) values('"+requestNumber+"','"+collectorDetails.get(i)+"')";
+				System.out.println("sqlReqMappingQuery final:"+sqlReqMappingQuery);
+				PreparedStatement pstmtRMQ = connection.prepareStatement(sqlReqMappingQuery);
+				pstmtRMQ.executeUpdate();
+			}
+			
 			
 			String sqlQuery = "insert into collection_request(req_name,req_location,req_address,req_contact,req_quantity,email,req_number,status) value(\""+user.getName()+"\",\""+user.getLocation()+"\",\""+user.getAddress()+"\",\""+user.getMobile()+"\",\""+user.getRequestedQuantity()+"\",\""+user.getEmail()+"\",\""+requestNumber+"\",\""+FCSConstants.COLLECTION_REQUEST_ASSIGNED+"\")";
 			System.out.println("final insert query"+sqlQuery);
@@ -186,7 +234,7 @@ public class UserDao {
 	public Map<String, String> getAllActiveCollectore() {
 
 		Map<String, String> collector = new HashMap<String, String>();
-		String sqlQuery = "select * from collector_availability where status=\"collectionRequestAssigned\"";
+		String sqlQuery = "select * from collector_availability where status=\"Ideal\"";
 		//select ca.user_email as user_email,ca.currentLocation as currentLocation , () from collector_availability ca, request_mapping rm, collection_request cr where status="Idle" and ca.user_email =rm.collectorIds and rm.RequestNo = cr.req_number
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
