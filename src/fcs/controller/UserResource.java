@@ -217,4 +217,16 @@ public class UserResource {
 			return "Error Occured, try after some time!!";
 		}
 	}
+	
+	@GET
+	@Path("collectorLogin")
+	@Produces(MediaType.APPLICATION_JSON)
+	public User loginCollector(@QueryParam("username")String uName,@QueryParam("password")String uPwd){
+		User  user = new User("", uName, "", "", "", uPwd);
+		System.out.println("User fetched is :"+user);
+		if(!userServices.collectorLogin(user)){
+			user.setEmail("error");
+		}
+		return user;
+	}
 }

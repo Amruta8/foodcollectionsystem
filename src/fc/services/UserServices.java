@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 
 import com.constant.FCSConstants;
 
 import fc.dao.UserDao;
 import fc.util.DistanceConverter;
 import fc.util.FCSUtil;
+import fc.util.ValueComparator;
 import fcs.bean.ResourceAllocationBean;
 import fcs.bean.User;
 
@@ -32,6 +34,11 @@ public class UserServices {
 				return user.getPassword();
 		}			
 		return "-1";
+	}
+	/*This will call dao to check the collector login status
+	 * */
+	public boolean collectorLogin(User user){
+		return userDao.collectorLogin(user);			
 	}
 	/*This will generate the random number*/
 	private int getRandomNumber(){
@@ -107,13 +114,52 @@ public class UserServices {
 			userDao.changeCollectorStatus(allocationBean.getAllocatedResourcesIds(),FCSConstants.COLLECTION_REQUEST_ASSIGNED);
 			return allocationBean.getAllocatedResourcesIds();
 		}else{
-			return null;
+			Map<String, Integer> allIdle = userDao.getIdleCollector();
+			return allocateIdle(allIdle, Integer.parseInt(quantity)).size()>0?allocateIdle(allIdle, Integer.parseInt(quantity)):null;			
 		}
 		
 	}
 
 	public String foodCollectionRequestStatus(String requestId) throws SQLException {
 		return userDao.foodCollectionRequestStatus(requestId);
+	}
+	
+	private List<String> allocateIdle(Map<String, Integer> allIdle, int requestedQuentity){		
+		ValueComparator bvcWithinGeo = new ValueComparator(allIdle);
+		TreeMap<String, Integer> collector = new TreeMap(bvcWithinGeo);   //This will sort the within geo fence values , for more information read TreeMap of Java Collection
+		collector.putAll(allIdle);
+		List<String> allocatedResources = new ArrayList<String>();		
+		while (requestedQuentity > 0) {
+			boolean isFound = false;
+			String lastKey = "";
+
+			for (Map.Entry<String, Integer> entry : collector.entrySet()) {    //This will check any single node is capable of carrying the food
+				String key = entry.getKey();
+				Integer value = entry.getValue();
+				if (requestedQuentity <= value) {
+					isFound = true;
+					allocatedResources.add(key);
+					// collector.remove(key);
+					requestedQuentity = requestedQuentity - value;
+					System.out.println("inside GEO AllocatedResource is :"+ key + " => " + value);
+					break;
+				}
+				lastKey = key;
+			}
+			if (!isFound) {															//If the single node is not capable then this block will devide it by assigning the most capable collector and removing it from collector list
+				System.out.println(collector.lastEntry());
+				allocatedResources.add(lastKey);
+				requestedQuentity = requestedQuentity- collector.lastEntry().getValue();
+				System.out.println("inside GEO AllocatedResource last element is :"+ lastKey+ " => "+collector.lastEntry().getValue());										
+				allIdle.remove(lastKey);
+				ValueComparator bvcWithinGeo1 = new ValueComparator(allIdle);
+				TreeMap<String, Integer> collector1 = new TreeMap(bvcWithinGeo1);
+				collector1.putAll(allIdle);
+				collector = collector1;
+				
+			}
+		}
+		return allocatedResources;		
 	}
 
 }

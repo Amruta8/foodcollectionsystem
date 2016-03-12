@@ -41,6 +41,23 @@ public class UserDao {
 		return false;
 	}
 	
+	/*DB call and auth check of collector*/
+	public boolean collectorLogin(User user){
+		String sqlQuery = "select * from user where username ="+"\""+user.getName()+"\""+" and password=\""+user.getPassword()+"\"";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+			ResultSet rs = preparedStatement.executeQuery();
+			while(rs.next()){
+				return true;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	public boolean setToken(User user){
 		String sqlQuery = "update user set token=\""+user.getPassword()+"\" where username=\""+user.getName()+"\"";
 		try {
@@ -234,14 +251,15 @@ public class UserDao {
 	public Map<String, String> getAllActiveCollectore() {
 
 		Map<String, String> collector = new HashMap<String, String>();
-		String sqlQuery = "select * from collector_availability where status=\"Ideal\"";
-		//select ca.user_email as user_email,ca.currentLocation as currentLocation , () from collector_availability ca, request_mapping rm, collection_request cr where status="Idle" and ca.user_email =rm.collectorIds and rm.RequestNo = cr.req_number
+		String sqlQuery = "select * from collector_availability where status not in (\"Idle\",\"failed\")";		
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
 			ResultSet rs = preparedStatement.executeQuery();
 			while(rs.next()){
-				collector.put(rs.getString("user_email"), rs.getString("qty")+"#"+rs.getString("currentLocation"));				
+				ResultSet rsSum = connection.prepareStatement("select sum(req_quantity) as sum from collection_request where req_number in (select RequestNo from request_mapping where collectorIds=\""+rs.getString("user_email")+"\")").executeQuery();
+				rs.next();
+				collector.put(rs.getString("user_email"), (Integer.parseInt(rs.getString("qty"))-rs.getInt("sum"))+"#"+rs.getString("currentLocation"));				
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -284,5 +302,20 @@ public class UserDao {
 			throw e;
 		}
 		return rs.next() ? rs.getString("status") : "The request id is not present.Enter valid one";
+	}
+
+	public Map<String, Integer> getIdleCollector() {
+		Map<String, Integer> result = new HashMap<String, Integer>();
+		try {
+			ResultSet rs = connection.prepareStatement("select * from collector_availability where status=\"Idle\"").executeQuery();			
+			while(rs.next()){
+				result.put(rs.getString("user_email"),Integer.parseInt(rs.getString("qty")));
+			}
+			System.out.println("The final Idle resultset is"+result);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return result;
 	}
 }
