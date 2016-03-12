@@ -43,7 +43,7 @@ public class UserDao {
 	
 	/*DB call and auth check of collector*/
 	public boolean collectorLogin(User user){
-		String sqlQuery = "select * from user where username ="+"\""+user.getName()+"\""+" and password=\""+user.getPassword()+"\"";
+		String sqlQuery = "select * from user where username ="+"\""+user.getEmail()+"\""+" and password=\""+user.getPassword()+"\"";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
