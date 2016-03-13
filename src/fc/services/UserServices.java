@@ -106,6 +106,7 @@ public class UserServices {
 				withinGeoF.put(key, Integer.parseInt(value.split("#")[0]));
 			}			
 		}
+		outsideGeoF = new HashMap<String, Integer>();
 		//System.out.println(DistanceConverter.distance(Integer.parseInt(location.split(",")[0]), Integer.parseInt(location.split(",")[0]), 18.5073985, 73.8076504, "K"));
 		System.out.println("Outside gof : "+outsideGeoF.size() +" Indide gof : "+withinGeoF.size());
 		ResourceAllocationBean allocationBean = fcsUtil.resourceAllocation(quantity, withinGeoF, outsideGeoF);		
