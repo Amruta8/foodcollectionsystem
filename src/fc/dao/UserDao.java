@@ -233,6 +233,9 @@ public class UserDao {
 				System.out.println("sqlReqMappingQuery final:"+sqlReqMappingQuery);
 				PreparedStatement pstmtRMQ = connection.prepareStatement(sqlReqMappingQuery);
 				pstmtRMQ.executeUpdate();
+				
+				String updateStatus = "update collector_availability set status=\""+FCSConstants.COLLECTION_REQUEST_ASSIGNED+"\" where user_email=\""+collectorDetails.get(i)+"\"";
+				connection.prepareStatement(updateStatus).executeUpdate();
 			}
 			
 			
