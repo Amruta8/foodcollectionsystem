@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `collection_request` (
   `req_number` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table fcs_stage.collection_request: ~7 rows (approximately)
+-- Dumping data for table fcs_stage.collection_request: ~1 rows (approximately)
 DELETE FROM `collection_request`;
 /*!40000 ALTER TABLE `collection_request` DISABLE KEYS */;
 /*!40000 ALTER TABLE `collection_request` ENABLE KEYS */;
@@ -46,15 +46,15 @@ CREATE TABLE IF NOT EXISTS `collector_availability` (
 DELETE FROM `collector_availability`;
 /*!40000 ALTER TABLE `collector_availability` DISABLE KEYS */;
 INSERT INTO `collector_availability` (`user_email`, `status`, `qty`, `maxDeleveryTime`, `currentLocation`) VALUES
-	('me.prashantghuge@gmail.com', 'Ideal', '25', NULL, '18.5635511,73.9325552'),
-	('jsr@gmail.com', 'Ideal', '250', NULL, '18.5073985,73.8076504'),
-	('ghuge@gmail.com', 'Ideal', '300', NULL, '18.4666576,73.8258668'),
-	('test1@gmail.com', 'Ideal', '200', NULL, '18.5308225,73.8474647'),
-	('132@.sd', 'Ideal', '110', NULL, '18.5934685,73.79291119999999'),
-	('shri@gmail.com', 'Ideal', '86', NULL, '18.5514501,73.9347856'),
-	('test2@gmail.com', 'Ideal', '100', NULL, '18.6297811,73.7997094'),
-	('t3@gmail.com', 'Ideal', '50', NULL, '18.6297811,73.7997094'),
-	('t4@gmail.com', 'Ideal', '12', NULL, '18.6297811,73.7997094');
+	('me.prashantghuge@gmail.com', 'Idle', '25', NULL, '18.5635511,73.9325552'),
+	('jsr@gmail.com', 'Idle', '250', NULL, '18.5073985,73.8076504'),
+	('ghuge@gmail.com', 'Idle', '300', NULL, '18.4666576,73.8258668'),
+	('test1@gmail.com', 'Idle', '200', NULL, '18.5308225,73.8474647'),
+	('132@.sd', 'Idle', '110', NULL, '18.5934685,73.79291119999999'),
+	('shri@gmail.com', 'Idle', '86', NULL, '18.5514501,73.9347856'),
+	('test2@gmail.com', 'Idle', '100', NULL, '18.6297811,73.7997094'),
+	('t3@gmail.com', 'Idle', '50', NULL, '18.6297811,73.7997094'),
+	('t4@gmail.com', 'Idle', '12', NULL, '18.6297811,73.7997094');
 /*!40000 ALTER TABLE `collector_availability` ENABLE KEYS */;
 
 
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `request_mapping` (
   `collectorIds` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table fcs_stage.request_mapping: ~0 rows (approximately)
+-- Dumping data for table fcs_stage.request_mapping: ~1 rows (approximately)
 DELETE FROM `request_mapping`;
 /*!40000 ALTER TABLE `request_mapping` DISABLE KEYS */;
 /*!40000 ALTER TABLE `request_mapping` ENABLE KEYS */;
@@ -86,7 +86,7 @@ DELETE FROM `user`;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 INSERT INTO `user` (`username`, `password`, `token`, `role`, `email`, `mobile`) VALUES
 	('test2', 'qwe', NULL, NULL, '132@.sd', '132'),
-	('admin', 'shri', '1117380063', 'admin', '2', ''),
+	('admin', 'shri', '1070265207', 'admin', '2', ''),
 	('shrikant', 'shri', NULL, NULL, 'ghuge@gmail.com', '7987987984'),
 	('Jai Shri', 'shrikant', NULL, NULL, 'jsr@gmail.com', '7897987987'),
 	('Prashant', 'prashant', NULL, NULL, 'me.prashantghuge@gmail.com', '7709582219'),
