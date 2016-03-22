@@ -26,34 +26,55 @@ public class UserDao {
 		}
 	}
 	public boolean authenticateUser(User user){
+		
 		String sqlQuery = "select * from user where username ="+"\""+user.getName()+"\""+" and password=\""+user.getPassword()+"\" and role=\"admin\"";
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
 			ResultSet rs = preparedStatement.executeQuery();
 			while(rs.next()){
 				return true;
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		return false;
 	}
 	
 	/*DB call and auth check of collector*/
 	public boolean collectorLogin(User user){
-		String sqlQuery = "select * from user where username ="+"\""+user.getEmail()+"\""+" and password=\""+user.getPassword()+"\"";
+		String sqlQuery = "select * from user where email ="+"\""+user.getEmail()+"\""+" and password=\""+user.getPassword()+"\"";
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
 			ResultSet rs = preparedStatement.executeQuery();
 			while(rs.next()){
 				return true;
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		return false;
 	}
@@ -61,10 +82,11 @@ public class UserDao {
 	public boolean setToken(User user){
 		String sqlQuery = "update user set token=\""+user.getPassword()+"\" where username=\""+user.getName()+"\"";
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
 			return true;
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -74,14 +96,24 @@ public class UserDao {
 
 		String sqlQuery = "select * from user where username=\""+user.getName()+"\"";
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
 			ResultSet rs = preparedStatement.executeQuery();
 			while(rs.next()){
 				return rs.getString("token");
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		return "-1";
 	
@@ -90,14 +122,24 @@ public class UserDao {
 	public boolean credentialsCheck(User user) {
 		String sqlQuery = "select * from user where username ="+"\""+user.getName()+"\""+" and token=\""+user.getPassword()+"\" and role=\"admin\"";
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
 			ResultSet rs = preparedStatement.executeQuery();
 			while(rs.next()){
 				return true;
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		return false;
 	}
@@ -107,16 +149,26 @@ public class UserDao {
 		String sqlQueryCollector = "insert into collector_availability(user_email,status,qty) value(\""+user.getEmail()+"\",\"Ideal\",\""+user.getRequestedQuantity()+"\")";
 		PreparedStatement preparedStatement;
 		try {
+			connection = ConnectionProvider.getConnection();
 			preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery);
 			preparedStatement.execute();
 			preparedStatement = connection.prepareStatement(sqlQueryCollector);
 			preparedStatement.execute();
 			return "User registered successfully";
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return "Duplicate entry";
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -124,6 +176,7 @@ public class UserDao {
 		String sqlQuery = "select * from user u, collector_availability ca where u.email = ca.user_email and u.email not in (select  email from user where role='admin' ) ";
 		List<User> userList = new ArrayList<User>();
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
 			ResultSet rs = preparedStatement.executeQuery();			
@@ -135,9 +188,18 @@ public class UserDao {
 				user.setStatus(rs.getString("status"));
 				userList.add(user);
 			}
-		} catch(SQLException exception){
+		} catch(Exception exception){
 			exception.printStackTrace();
 			throw exception;
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		return userList;
 	}
@@ -146,6 +208,7 @@ public class UserDao {
 		String sqlQuery = "select * from collection_request where status not in('"+FCSConstants.REQUEST_FULLFILLED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
 		List<User> userList = new ArrayList<User>();
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			ResultSet rs = preparedStatement.executeQuery();	
 			System.out.println(sqlQuery +"and execute query result is :"+rs);					
@@ -163,24 +226,44 @@ public class UserDao {
 		} catch(SQLException exception){
 			exception.printStackTrace();
 			throw exception;
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		return userList;
 	}
 	
 	public boolean deleteUser(String email) {
 		try {
+			connection = ConnectionProvider.getConnection();
 			String sqlQuery = "delete from user where email = \""+email+"\"";
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			preparedStatement.executeUpdate();
-		} catch (SQLException e) {			
+		} catch (Exception e) {			
 			e.printStackTrace();
 			return false;
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}		
 		return true;
 	}
 	
 	public boolean deleteFCReq(String reqNo) {
 		try {
+			connection = ConnectionProvider.getConnection();
 			String sqlQuery = "delete from request_mapping where RequestNo = \""+reqNo.trim()+"\"";
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			preparedStatement.executeUpdate();
@@ -195,6 +278,15 @@ public class UserDao {
 		} catch (SQLException e) {			
 			e.printStackTrace();
 			return false;
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}		
 		return true;
 	}
@@ -202,11 +294,21 @@ public class UserDao {
 	public boolean updateUser(User user) {		
 		String sqlQuery = "update user set mobile=\""+user.getMobile()+"\",username=\""+user.getName()+"\" where email=\""+user.getEmail()+"\"";
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {			
 			e.printStackTrace();
 			return false;
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return true;
@@ -215,11 +317,21 @@ public class UserDao {
 	public boolean logout() {
 		String sqlQuery = "update user set token=\"-1\" where role=\"admin\"";
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {			
 			e.printStackTrace();
 			return false;
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return true;
@@ -228,6 +340,7 @@ public class UserDao {
 	public String foodCollectionRequest(User user, String requestNumber, List<String> collectorDetails) throws SQLException {
 		System.out.println("into UserDao.foodCollectionRequest with user :"+user);
 		try {
+			connection = ConnectionProvider.getConnection();
 			for (int i = 0; i < collectorDetails.size(); i++) {
 				String sqlReqMappingQuery = "insert into request_mapping(RequestNo,collectorIds) values('"+requestNumber+"','"+collectorDetails.get(i)+"')";
 				System.out.println("sqlReqMappingQuery final:"+sqlReqMappingQuery);
@@ -247,6 +360,15 @@ public class UserDao {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw e;
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		
 	}
@@ -256,6 +378,7 @@ public class UserDao {
 		Map<String, String> collector = new HashMap<String, String>();
 		String sqlQuery = "select * from collector_availability where status not in (\"Idle\",\"failed\")";		
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
 			ResultSet rs = preparedStatement.executeQuery();
@@ -266,6 +389,15 @@ public class UserDao {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		return collector;
 	}
@@ -281,6 +413,7 @@ public class UserDao {
 		}
 		String query = "update collector_availability set status='"+status+"' where user_email in ("+idsToUpdate+")";
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement pstmt = connection.prepareStatement(query);
 			if(pstmt.executeUpdate()>0){
 				return true;			
@@ -290,6 +423,15 @@ public class UserDao {
 		} catch (SQLException e) {			
 			e.printStackTrace();
 			throw e;
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		
 	}
@@ -298,11 +440,21 @@ public class UserDao {
 		String query = "select status from collection_request where req_number='"+requestId+"'";
 		ResultSet rs;
 		try {
+			connection = ConnectionProvider.getConnection();
 			PreparedStatement preparedStatement  = connection.prepareStatement(query);
 			rs = preparedStatement.executeQuery();			
 		} catch (SQLException e) {			
 			e.printStackTrace();
 			throw e;
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		return rs.next() ? rs.getString("status") : "The request id is not present.Enter valid one";
 	}
@@ -310,6 +462,7 @@ public class UserDao {
 	public Map<String, Integer> getIdleCollector() {
 		Map<String, Integer> result = new HashMap<String, Integer>();
 		try {
+			connection = ConnectionProvider.getConnection();
 			ResultSet rs = connection.prepareStatement("select * from collector_availability where status=\"Idle\"").executeQuery();			
 			while(rs.next()){
 				result.put(rs.getString("user_email"),Integer.parseInt(rs.getString("qty")));
@@ -318,6 +471,15 @@ public class UserDao {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			if(connection!=null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}		
 		return result;
 	}
