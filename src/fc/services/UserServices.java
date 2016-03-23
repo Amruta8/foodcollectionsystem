@@ -40,6 +40,11 @@ public class UserServices {
 	public boolean collectorLogin(User user){
 		return userDao.collectorLogin(user);			
 	}
+	
+	/*This will return the assigned requests*/
+	public List<User> requestForCollector(User user){
+		return userDao.requestForCollector(user);			
+	}
 	/*This will generate the random number*/
 	private int getRandomNumber(){
 		System.out.println("Inside ramdom number generator");

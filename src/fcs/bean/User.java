@@ -20,6 +20,23 @@ public class User {
 		this.dateOfBirth = dateOfBirth;
 		this.password = password;
 	}
+	
+	
+
+	public User(String name, String email, String mobile, String address,
+			String dateOfBirth, String password, String status,
+			String requestedQuantity, String location) {
+		super();
+		this.name = name;
+		this.email = email;
+		this.mobile = mobile;
+		Address = address;
+		this.dateOfBirth = dateOfBirth;
+		this.password = password;
+		this.status = status;
+		this.requestedQuantity = requestedQuantity;
+		this.location = location;
+	}
 
 	public String getName() {
 		return name;

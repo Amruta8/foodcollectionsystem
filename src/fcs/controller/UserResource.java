@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -228,5 +229,14 @@ public class UserResource {
 			user.setEmail("error");
 		}
 		return user;
+	}
+	
+	@GET
+	@Path("requestForCollector")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<User> requestForCollector(@QueryParam("username")String uName){
+		User  user = new User("", uName, "", "", "","");
+		System.out.println("User fetched is :"+user);
+		return userServices.requestForCollector(user);
 	}
 }

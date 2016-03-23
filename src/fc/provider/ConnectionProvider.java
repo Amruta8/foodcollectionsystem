@@ -34,7 +34,8 @@ public class ConnectionProvider {
 					e1.printStackTrace();
 				}
 			}
-		}	
+		}
+		System.out.println("New connection ::"+con);
 		return con;
 	} 
 }
