@@ -45,6 +45,16 @@ public class UserServices {
 	public List<User> requestForCollector(User user){
 		return userDao.requestForCollector(user);			
 	}
+	/*This will update the status*/
+	public boolean updateRequestStatus(User user){
+		return userDao.updateRequestStatus(user);			
+	}
+	
+	/*update location*/
+	public boolean updateLocation(User user){
+		return userDao.updateLocation(user);			
+	}
+	
 	/*This will generate the random number*/
 	private int getRandomNumber(){
 		System.out.println("Inside ramdom number generator");

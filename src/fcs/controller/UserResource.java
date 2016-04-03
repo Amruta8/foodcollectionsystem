@@ -234,9 +234,25 @@ public class UserResource {
 	@GET
 	@Path("requestForCollector")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<User> requestForCollector(@QueryParam("username")String uName){
-		User  user = new User("", uName, "", "", "","");
+	public List<User> requestForCollector(@QueryParam("username")String uName,@QueryParam("status")String status,@QueryParam("location")String location){
+		User  user = new User("", uName, "", "", "", "", status, "", location);
 		System.out.println("User fetched is :"+user);
 		return userServices.requestForCollector(user);
+	}
+	@GET
+	@Path("updateRequestStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	public User updateRequestStatus(@QueryParam("username")String uName,@QueryParam("status")String status){
+		User  user = new User("", uName, "", "", "", "", status, "", "");
+		System.out.println("User fetched is :"+user);
+		return userServices.updateRequestStatus(user)?new User("", uName, "", "", "", ""):null;
+	}
+	@GET
+	@Path("updateLocation")
+	@Produces(MediaType.APPLICATION_JSON)
+	public User updateLocation(@QueryParam("username")String uName,@QueryParam("location")String location){
+		User  user = new User("", uName, "", "", "", "", "", "", location);
+		System.out.println("User fetched for location is :"+user);
+		return userServices.updateLocation(user)?new User("", uName, "", "", "", ""):null;
 	}
 }

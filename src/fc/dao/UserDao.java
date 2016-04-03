@@ -61,26 +61,68 @@ public class UserDao {
 	// User(String name, String email, String mobile, String address,String dateOfBirth, String password)
 	/*check food collection requests for collection*/
 	public List<User> requestForCollector(User user){
-		String sqlQuery = "select * from collection_request where req_number in (select RequestNo from request_mapping where collectorIds =\""+user.getEmail()+"\")";
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
-			ResultSet rs = preparedStatement.executeQuery();
-			List<User> users  = new ArrayList<User>();
-			users.add(new User());
-			while(rs.next()){
-				users.add(new User(rs.getString("req_name"), rs.getString("email"), rs.getString("req_contact"), rs.getString("req_address"), "","","",rs.getString("req_quantity"),rs.getString("req_location") ));
+		System.out.println("user is"+user);
+		System.out.println(user.getStatus().trim().toString().equalsIgnoreCase("null"));
+		if((user.getStatus()==null || user.getStatus().trim().toString().equalsIgnoreCase("null")) & (user.getLocation()==null || user.getLocation().trim().toString().equalsIgnoreCase("null"))){
+			String sqlQuery = "select * from collection_request where req_number in (select RequestNo from request_mapping where collectorIds =\""+user.getEmail()+"\") and status not in('"+FCSConstants.REQUEST_FULLFILLED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
+			try {
+				PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+				System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+				ResultSet rs = preparedStatement.executeQuery();
+				List<User> users  = new ArrayList<User>();
+				users.add(new User());
+				while(rs.next()){
+					users.add(new User(rs.getString("req_name"), rs.getString("email"), rs.getString("req_contact"), rs.getString("req_address"), "","","",rs.getString("req_quantity"),rs.getString("req_location") ));
+				}
+				System.out.println("requests for collector length"+users.size());
+				return users;
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			return users;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}else if(user.getLocation()==null || user.getLocation().trim().toString().equalsIgnoreCase("null")){
+			String sqlQuery = "update collector_availability set status=\""+user.getStatus().trim()+"\" where user_email=\""+user.getEmail()+"\"";
+			try {
+				PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+				System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+				return null;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
+		System.out.println("not in any if");
+		
 		return null;
 	}
 	
 	public boolean setToken(User user){
 		String sqlQuery = "update user set token=\""+user.getPassword()+"\" where username=\""+user.getName()+"\"";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/*Update status*/
+	public boolean updateRequestStatus(User user){
+		String sqlQuery = "update collector_availability set status=\""+user.getStatus().trim()+"\" where user_email=\""+user.getEmail()+"\"";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/*update location*/
+	public boolean updateLocation(User user){
+		String sqlQuery = "update collector_availability set currentLocation=\""+user.getLocation().trim()+"\" where user_email=\""+user.getEmail()+"\"";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
