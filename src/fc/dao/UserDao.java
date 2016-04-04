@@ -307,19 +307,21 @@ public class UserDao {
 	public Map<String, String> getAllActiveCollectore() {
 
 		Map<String, String> collector = new HashMap<String, String>();
-		String sqlQuery = "select * from collector_availability where status not in (\"Idle\",\"failed\")";		
+		String sqlQuery = "select * from collector_availability where status not in (\"Idle\",\""+FCSConstants.REQUEST_CANCELLED+"\")";		
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
 			ResultSet rs = preparedStatement.executeQuery();
 			while(rs.next()){
+				System.out.println("alive collector is : select sum(req_quantity) as sum from collection_request where req_number in (select RequestNo from request_mapping where collectorIds=\""+rs.getString("user_email")+"\")");
 				ResultSet rsSum = connection.prepareStatement("select sum(req_quantity) as sum from collection_request where req_number in (select RequestNo from request_mapping where collectorIds=\""+rs.getString("user_email")+"\")").executeQuery();
-				rs.next();
-				collector.put(rs.getString("user_email"), (Integer.parseInt(rs.getString("qty"))-rs.getInt("sum"))+"#"+rs.getString("currentLocation"));				
+				if(rsSum.next())
+				collector.put(rs.getString("user_email"), (Integer.parseInt(rs.getString("qty"))-rsSum.getInt("sum"))+"#"+rs.getString("currentLocation"));				
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println("collector is "+collector);
 		return collector;
 	}
 
