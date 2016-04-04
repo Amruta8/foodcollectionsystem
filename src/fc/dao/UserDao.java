@@ -62,9 +62,12 @@ public class UserDao {
 	/*check food collection requests for collection*/
 	public List<User> requestForCollector(User user){
 		System.out.println("user is"+user);
-		System.out.println(user.getStatus().trim().toString().equalsIgnoreCase("null"));
+		System.out.println(user.getStatus()==null);
+		System.out.println(((user.getStatus()==null)?"":" and req_number ="+user.getStatus().trim().toString()));
+		//System.out.println("status : "+user.getStatus().trim().toString().equalsIgnoreCase("null"));
 		
-			String sqlQuery = "select * from collection_request where req_number in (select RequestNo from request_mapping where collectorIds =\""+user.getEmail()+"\") and status not in('"+FCSConstants.REQUEST_COMPLETED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
+			String sqlQuery = "select * from collection_request where req_number in (select RequestNo from request_mapping where collectorIds =\""+user.getEmail()+"\") and status not in('"+FCSConstants.REQUEST_COMPLETED+"','"+FCSConstants.REQUEST_CANCELLED+"')"+((user.getStatus()==null)?"":" and req_number ='"+user.getStatus().trim().toString()+"'");
+			System.out.println("the final query :"+sqlQuery);
 			try {
 				PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 				System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
@@ -72,7 +75,7 @@ public class UserDao {
 				List<User> users  = new ArrayList<User>();
 				users.add(new User());
 				while(rs.next()){
-					users.add(new User(rs.getString("req_name"), rs.getString("email"), rs.getString("req_contact"), rs.getString("req_address"), "","","",rs.getString("req_quantity"),rs.getString("req_location") ));
+					users.add(new User(rs.getString("req_name"), rs.getString("email"), rs.getString("req_contact"), rs.getString("req_address"), "","",rs.getString("req_number"),rs.getString("req_quantity"),rs.getString("req_location") ));
 				}
 				System.out.println("requests for collector length"+users.size());
 				return users;
@@ -99,7 +102,7 @@ public class UserDao {
 	
 	/*Update status*/
 	public boolean updateRequestStatus(User user){
-		String sqlQuery = "update collector_availability set status=\""+user.getStatus().trim()+"\" where user_email=\""+user.getEmail()+"\"";
+		String sqlQuery = "update collector_availability set status=\""+(user.getStatus().trim().equalsIgnoreCase(FCSConstants.REQUEST_COMPLETED)?"Idle":user.getStatus().trim())+"\" where user_email=\""+user.getEmail()+"\"";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
