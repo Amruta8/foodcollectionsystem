@@ -66,7 +66,7 @@ public class UserDao {
 		System.out.println(((user.getStatus()==null)?"":" and req_number ="+user.getStatus().trim().toString()));
 		//System.out.println("status : "+user.getStatus().trim().toString().equalsIgnoreCase("null"));
 		
-			String sqlQuery = "select * from collection_request where req_number in (select RequestNo from request_mapping where collectorIds =\""+user.getEmail()+"\") and status not in('"+FCSConstants.REQUEST_COMPLETED+"','"+FCSConstants.REQUEST_CANCELLED+"')"+((user.getStatus()==null)?"":" and req_number ='"+user.getStatus().trim().toString()+"'");
+			String sqlQuery = "select * from collection_request where req_number in (select RequestNo from request_mapping where collectorIds =\""+user.getEmail()+"\") and status not in('"+FCSConstants.REQUEST_COMPLETED+"','"+FCSConstants.REQUEST_CANCELLED+"')"+((user.getStatus()==null || user.getStatus().trim().toString().equalsIgnoreCase("null") || user.getStatus().trim().toString() == "")?"":" and req_number ='"+user.getStatus().trim().toString()+"'");
 			System.out.println("the final query :"+sqlQuery);
 			try {
 				PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -102,10 +102,20 @@ public class UserDao {
 	
 	/*Update status*/
 	public boolean updateRequestStatus(User user){
-		String sqlQuery = "update collector_availability set status=\""+(user.getStatus().trim().equalsIgnoreCase(FCSConstants.REQUEST_COMPLETED)?"Idle":user.getStatus().trim())+"\" where user_email=\""+user.getEmail()+"\"";
+		String sqlQuery = "update collection_request set status=\""+user.getStatus().trim()+"\" where req_number='"+user.getRequestedQuantity()+"'";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+			
+			String updateCollectorStatus = "select * from collection_request where status in ('collectionRequestAssigned','FCSConstants.REQUEST_COLLECTED') and req_number in (select RequestNo from request_mapping where collectorIds='"+user.getEmail()+"')";
+			PreparedStatement pstmt  = connection.prepareStatement(updateCollectorStatus);
+			ResultSet rs=  pstmt.executeQuery();
+			if(rs.next()){
+				
+			}else{
+				String updateCollector = "update collector_availability set status='Idle'";
+				connection.prepareStatement(updateCollector).execute();
+			}
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -317,7 +327,7 @@ public class UserDao {
 			ResultSet rs = preparedStatement.executeQuery();
 			while(rs.next()){
 				System.out.println("alive collector is : select sum(req_quantity) as sum from collection_request where req_number in (select RequestNo from request_mapping where collectorIds=\""+rs.getString("user_email")+"\")");
-				ResultSet rsSum = connection.prepareStatement("select sum(req_quantity) as sum from collection_request where req_number in (select RequestNo from request_mapping where collectorIds=\""+rs.getString("user_email")+"\")").executeQuery();
+				ResultSet rsSum = connection.prepareStatement("select sum(req_quantity) as sum from collection_request where status in('collectionRequestAssigned','"+FCSConstants.REQUEST_COLLECTED+"') and req_number in (select RequestNo from request_mapping where collectorIds=\""+rs.getString("user_email")+"\")").executeQuery();
 				if(rsSum.next())
 				collector.put(rs.getString("user_email"), (Integer.parseInt(rs.getString("qty"))-rsSum.getInt("sum"))+"#"+rs.getString("currentLocation"));				
 			}
