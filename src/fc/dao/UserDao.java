@@ -63,8 +63,8 @@ public class UserDao {
 	public List<User> requestForCollector(User user){
 		System.out.println("user is"+user);
 		System.out.println(user.getStatus().trim().toString().equalsIgnoreCase("null"));
-		if((user.getStatus()==null || user.getStatus().trim().toString().equalsIgnoreCase("null")) & (user.getLocation()==null || user.getLocation().trim().toString().equalsIgnoreCase("null"))){
-			String sqlQuery = "select * from collection_request where req_number in (select RequestNo from request_mapping where collectorIds =\""+user.getEmail()+"\") and status not in('"+FCSConstants.REQUEST_FULLFILLED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
+		
+			String sqlQuery = "select * from collection_request where req_number in (select RequestNo from request_mapping where collectorIds =\""+user.getEmail()+"\") and status not in('"+FCSConstants.REQUEST_COMPLETED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
 			try {
 				PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 				System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
@@ -79,17 +79,7 @@ public class UserDao {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-		}else if(user.getLocation()==null || user.getLocation().trim().toString().equalsIgnoreCase("null")){
-			String sqlQuery = "update collector_availability set status=\""+user.getStatus().trim()+"\" where user_email=\""+user.getEmail()+"\"";
-			try {
-				PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-				System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
-				return null;
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+			}		
 		System.out.println("not in any if");
 		
 		return null;
@@ -206,7 +196,7 @@ public class UserDao {
 	}
 	
 	public List<User> getCollectionRequest() throws Exception{
-		String sqlQuery = "select * from collection_request where status not in('"+FCSConstants.REQUEST_FULLFILLED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
+		String sqlQuery = "select * from collection_request where status not in('"+FCSConstants.REQUEST_COMPLETED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
 		List<User> userList = new ArrayList<User>();
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
