@@ -125,14 +125,17 @@ public class UserDao {
 	
 	/*update location*/
 	public boolean updateLocation(User user){
-		String sqlQuery = "update collector_availability set currentLocation=\""+user.getLocation().trim()+"\" where user_email=\""+user.getEmail()+"\"";
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		System.out.println("user location is"+user.getLocation());
+		if(user.getLocation()!=null && user.getLocation().trim()!="" && user.getLocation().trim().equalsIgnoreCase("null")){
+			String sqlQuery = "update collector_availability set currentLocation=\""+user.getLocation().trim()+"\" where user_email=\""+user.getEmail()+"\"";
+			try {
+				PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
+				System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+				return true;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}		
+		}	
 		return false;
 	}
 	
