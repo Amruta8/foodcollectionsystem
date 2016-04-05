@@ -170,7 +170,7 @@ public class UserDao {
 
 	public String signupUser(User user) {
 		String sqlQuery = "insert into user(username,email,mobile,password) value(\""+user.getName()+"\",\""+user.getEmail()+"\",\""+user.getMobile()+"\",\""+user.getPassword()+"\")";
-		String sqlQueryCollector = "insert into collector_availability(user_email,status,qty) value(\""+user.getEmail()+"\",\"Ideal\",\""+user.getRequestedQuantity()+"\")";
+		String sqlQueryCollector = "insert into collector_availability(user_email,status,qty) value(\""+user.getEmail()+"\",\"Idle\",\""+user.getRequestedQuantity()+"\")";
 		PreparedStatement preparedStatement;
 		try {
 			preparedStatement = connection.prepareStatement(sqlQuery);
