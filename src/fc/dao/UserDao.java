@@ -111,13 +111,14 @@ public class UserDao {
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
-			
-			String updateCollectorStatus = "select * from collection_request where status in ('collectionRequestAssigned','FCSConstants.REQUEST_COLLECTED') and req_number in (select RequestNo from request_mapping where collectorIds='"+user.getEmail()+"')";
+			connection = ConnectionProvider.getConnection();
+			String updateCollectorStatus = "select * from collection_request where status in ('collectionRequestAssigned','"+FCSConstants.REQUEST_COLLECTED+"') and req_number in (select RequestNo from request_mapping where collectorIds='"+user.getEmail()+"')";
 			PreparedStatement pstmt  = connection.prepareStatement(updateCollectorStatus);
 			ResultSet rs=  pstmt.executeQuery();
 			if(rs.next()){
 				
 			}else{
+				connection = ConnectionProvider.getConnection();
 				String updateCollector = "update collector_availability set status='Idle'";
 				connection.prepareStatement(updateCollector).execute();
 			}
@@ -132,7 +133,7 @@ public class UserDao {
 	public boolean updateLocation(User user){
 		connection = ConnectionProvider.getConnection();
 		System.out.println("user location is"+user.getLocation());
-		if(user.getLocation()!=null && user.getLocation().trim()!="" && user.getLocation().trim().equalsIgnoreCase("null")){
+		if(user.getLocation()!=null && user.getLocation().trim()!="" && !user.getLocation().trim().equalsIgnoreCase("null")){
 			String sqlQuery = "update collector_availability set currentLocation=\""+user.getLocation().trim()+"\" where user_email=\""+user.getEmail()+"\"";
 			try {
 				PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -187,6 +188,7 @@ public class UserDao {
 			preparedStatement = connection.prepareStatement(sqlQuery);
 			System.out.println(sqlQuery);
 			preparedStatement.execute();
+			connection = ConnectionProvider.getConnection();
 			preparedStatement = connection.prepareStatement(sqlQueryCollector);
 			preparedStatement.execute();
 			return "User registered successfully";
@@ -222,7 +224,7 @@ public class UserDao {
 	
 	public List<User> getCollectionRequest() throws Exception{
 		connection = ConnectionProvider.getConnection();
-		String sqlQuery = "select * from collection_request where status not in('"+FCSConstants.REQUEST_COMPLETED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
+		String sqlQuery = "select * from collection_request"; // where status not in('"+FCSConstants.REQUEST_COMPLETED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
 		List<User> userList = new ArrayList<User>();
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -265,11 +267,11 @@ public class UserDao {
 			String sqlQuery = "delete from request_mapping where RequestNo = \""+reqNo.trim()+"\"";
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			preparedStatement.executeUpdate();
-			
+			connection = ConnectionProvider.getConnection();
 			String sqlQuery2 = "update collection_request  set status='"+FCSConstants.REQUEST_CANCELLED+"' where req_number= \""+reqNo.trim()+"\"";
 			PreparedStatement preparedStatement2 = connection.prepareStatement(sqlQuery2);
 			preparedStatement2.executeUpdate();
-			
+			connection = ConnectionProvider.getConnection();
 			String sqlQuery3 = "update collector_availability set status =\"Idle\" where user_email not in (select collectorids from request_mapping)";
 			PreparedStatement preparedStatement3 = connection.prepareStatement(sqlQuery3);
 			preparedStatement3.executeUpdate();
@@ -317,12 +319,12 @@ public class UserDao {
 				System.out.println("sqlReqMappingQuery final:"+sqlReqMappingQuery);
 				PreparedStatement pstmtRMQ = connection.prepareStatement(sqlReqMappingQuery);
 				pstmtRMQ.executeUpdate();
-				
+				connection = ConnectionProvider.getConnection();
 				String updateStatus = "update collector_availability set status=\""+FCSConstants.COLLECTION_REQUEST_ASSIGNED+"\" where user_email=\""+collectorDetails.get(i)+"\"";
 				connection.prepareStatement(updateStatus).executeUpdate();
 			}
 			
-			
+			connection = ConnectionProvider.getConnection();
 			String sqlQuery = "insert into collection_request(req_name,req_location,req_address,req_contact,req_quantity,email,req_number,status) value(\""+user.getName()+"\",\""+user.getLocation()+"\",\""+user.getAddress()+"\",\""+user.getMobile()+"\",\""+user.getRequestedQuantity()+"\",\""+user.getEmail()+"\",\""+requestNumber+"\",\""+FCSConstants.COLLECTION_REQUEST_ASSIGNED+"\")";
 			System.out.println("final insert query"+sqlQuery);
 			PreparedStatement pstmt= connection.prepareStatement(sqlQuery);
