@@ -26,6 +26,7 @@ public class UserDao {
 		}
 	}
 	public boolean authenticateUser(User user){
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "select * from user where username ="+"\""+user.getName()+"\""+" and password=\""+user.getPassword()+"\" and role=\"admin\"";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -43,6 +44,7 @@ public class UserDao {
 	
 	/*DB call and auth check of collector*/
 	public boolean collectorLogin(User user){
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "select * from user where email ="+"\""+user.getEmail()+"\""+" and password=\""+user.getPassword()+"\"";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -61,6 +63,7 @@ public class UserDao {
 	// User(String name, String email, String mobile, String address,String dateOfBirth, String password)
 	/*check food collection requests for collection*/
 	public List<User> requestForCollector(User user){
+		connection = ConnectionProvider.getConnection();
 		System.out.println("user is"+user);
 		System.out.println(user.getStatus()==null);
 		System.out.println(((user.getStatus()==null)?"":" and req_number ="+user.getStatus().trim().toString()));
@@ -89,6 +92,7 @@ public class UserDao {
 	}
 	
 	public boolean setToken(User user){
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "update user set token=\""+user.getPassword()+"\" where username=\""+user.getName()+"\"";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -102,6 +106,7 @@ public class UserDao {
 	
 	/*Update status*/
 	public boolean updateRequestStatus(User user){
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "update collection_request set status=\""+user.getStatus().trim()+"\" where req_number='"+user.getRequestedQuantity()+"'";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -125,6 +130,7 @@ public class UserDao {
 	
 	/*update location*/
 	public boolean updateLocation(User user){
+		connection = ConnectionProvider.getConnection();
 		System.out.println("user location is"+user.getLocation());
 		if(user.getLocation()!=null && user.getLocation().trim()!="" && user.getLocation().trim().equalsIgnoreCase("null")){
 			String sqlQuery = "update collector_availability set currentLocation=\""+user.getLocation().trim()+"\" where user_email=\""+user.getEmail()+"\"";
@@ -140,7 +146,7 @@ public class UserDao {
 	}
 	
 	public String getToken(User user){
-
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "select * from user where username=\""+user.getName()+"\"";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -157,6 +163,7 @@ public class UserDao {
 	}
 
 	public boolean credentialsCheck(User user) {
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "select * from user where username ="+"\""+user.getName()+"\""+" and token=\""+user.getPassword()+"\" and role=\"admin\"";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -172,6 +179,7 @@ public class UserDao {
 	}
 
 	public String signupUser(User user) {
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "insert into user(username,email,mobile,password) value(\""+user.getName()+"\",\""+user.getEmail()+"\",\""+user.getMobile()+"\",\""+user.getPassword()+"\")";
 		String sqlQueryCollector = "insert into collector_availability(user_email,status,qty) value(\""+user.getEmail()+"\",\"Idle\",\""+user.getRequestedQuantity()+"\")";
 		PreparedStatement preparedStatement;
@@ -190,6 +198,7 @@ public class UserDao {
 	}
 
 	public List<User> getRegisteredUser() throws Exception{
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "select * from user u, collector_availability ca where u.email = ca.user_email and u.email not in (select  email from user where role='admin' ) ";
 		List<User> userList = new ArrayList<User>();
 		try {
@@ -212,6 +221,7 @@ public class UserDao {
 	}
 	
 	public List<User> getCollectionRequest() throws Exception{
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "select * from collection_request where status not in('"+FCSConstants.REQUEST_COMPLETED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
 		List<User> userList = new ArrayList<User>();
 		try {
@@ -237,6 +247,7 @@ public class UserDao {
 	}
 	
 	public boolean deleteUser(String email) {
+		connection = ConnectionProvider.getConnection();
 		try {
 			String sqlQuery = "delete from user where email = \""+email+"\"";
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -249,6 +260,7 @@ public class UserDao {
 	}
 	
 	public boolean deleteFCReq(String reqNo) {
+		connection = ConnectionProvider.getConnection();
 		try {
 			String sqlQuery = "delete from request_mapping where RequestNo = \""+reqNo.trim()+"\"";
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -269,6 +281,7 @@ public class UserDao {
 	}
 
 	public boolean updateUser(User user) {		
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "update user set mobile=\""+user.getMobile()+"\",username=\""+user.getName()+"\" where email=\""+user.getEmail()+"\"";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -282,6 +295,7 @@ public class UserDao {
 	}
 
 	public boolean logout() {
+		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "update user set token=\"-1\" where role=\"admin\"";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
@@ -295,6 +309,7 @@ public class UserDao {
 	}
 
 	public String foodCollectionRequest(User user, String requestNumber, List<String> collectorDetails) throws SQLException {
+		connection = ConnectionProvider.getConnection();
 		System.out.println("into UserDao.foodCollectionRequest with user :"+user);
 		try {
 			for (int i = 0; i < collectorDetails.size(); i++) {
@@ -321,7 +336,7 @@ public class UserDao {
 	}
 
 	public Map<String, String> getAllActiveCollectore() {
-
+		connection = ConnectionProvider.getConnection();
 		Map<String, String> collector = new HashMap<String, String>();
 		String sqlQuery = "select * from collector_availability where status not in (\"Idle\",\""+FCSConstants.REQUEST_CANCELLED+"\")";		
 		try {
@@ -342,6 +357,7 @@ public class UserDao {
 	}
 
 	public boolean changeCollectorStatus(List<String> allocatedResourcesIds,String status) throws SQLException {
+		connection = ConnectionProvider.getConnection();
 		String idsToUpdate="";
 		for (int i = 0; i < allocatedResourcesIds.size(); i++) {
 			if(i==0){
@@ -366,6 +382,7 @@ public class UserDao {
 	}
 
 	public String foodCollectionRequestStatus(String requestId) throws SQLException {
+		connection = ConnectionProvider.getConnection();
 		String query = "select status from collection_request where req_number='"+requestId+"'";
 		ResultSet rs;
 		try {
@@ -379,6 +396,7 @@ public class UserDao {
 	}
 
 	public Map<String, Integer> getIdleCollector() {
+		connection = ConnectionProvider.getConnection();
 		Map<String, Integer> result = new HashMap<String, Integer>();
 		try {
 			ResultSet rs = connection.prepareStatement("select * from collector_availability where status=\"Idle\"").executeQuery();			
