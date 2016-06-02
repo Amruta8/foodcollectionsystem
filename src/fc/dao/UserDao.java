@@ -119,7 +119,7 @@ public class UserDao {
 				
 			}else{
 				connection = ConnectionProvider.getConnection();
-				String updateCollector = "update collector_availability set status='Idle'";
+				String updateCollector = "update collector_availability set status='Idle' where user_email='"+user.getEmail()+"'";
 				connection.prepareStatement(updateCollector).execute();
 			}
 			return true;
@@ -205,7 +205,7 @@ public class UserDao {
 		List<User> userList = new ArrayList<User>();
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
-			System.out.println(sqlQuery +"and execute query result is :"+preparedStatement.execute());
+			System.out.println(sqlQuery +"and execute query result is :");
 			ResultSet rs = preparedStatement.executeQuery();			
 			while(rs.next()){
 				User user = new User();
@@ -226,6 +226,7 @@ public class UserDao {
 		connection = ConnectionProvider.getConnection();
 		String sqlQuery = "select * from collection_request"; // where status not in('"+FCSConstants.REQUEST_COMPLETED+"','"+FCSConstants.REQUEST_CANCELLED+"')";
 		List<User> userList = new ArrayList<User>();
+		int total = 0;
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			ResultSet rs = preparedStatement.executeQuery();	
@@ -240,7 +241,12 @@ public class UserDao {
 				user.setLocation(rs.getString("req_address"));
 				user.setRequestedQuantity(rs.getString("req_quantity"));
 				userList.add(user);
+				
+				if("Request Completed".equalsIgnoreCase(rs.getString("status"))){
+					total = total + Integer.parseInt(rs.getString("req_quantity"));
+				}
 			}
+			userList.add(new User("", "", "", "", "Total", "", "", total+"", ""));
 		} catch(SQLException exception){
 			exception.printStackTrace();
 			throw exception;
@@ -254,6 +260,10 @@ public class UserDao {
 			String sqlQuery = "delete from user where email = \""+email+"\"";
 			PreparedStatement preparedStatement = connection.prepareStatement(sqlQuery);
 			preparedStatement.executeUpdate();
+			
+			connection = ConnectionProvider.getConnection();
+			connection.prepareStatement("delete from collector_availability where user_email = \""+email+"\"").executeUpdate();
+			
 		} catch (SQLException e) {			
 			e.printStackTrace();
 			return false;
