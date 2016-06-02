@@ -330,7 +330,7 @@ public class UserDao {
 				PreparedStatement pstmtRMQ = connection.prepareStatement(sqlReqMappingQuery);
 				pstmtRMQ.executeUpdate();
 				connection = ConnectionProvider.getConnection();
-				String updateStatus = "update collector_availability set status=\""+FCSConstants.COLLECTION_REQUEST_ASSIGNED+"\" where user_email=\""+collectorDetails.get(i)+"\"";
+				String updateStatus = "update collector_availability set currentLocation='18.4667874,73.8358176', status=\""+FCSConstants.COLLECTION_REQUEST_ASSIGNED+"\" where user_email=\""+collectorDetails.get(i)+"\"";
 				connection.prepareStatement(updateStatus).executeUpdate();
 			}
 			

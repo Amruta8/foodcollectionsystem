@@ -131,7 +131,8 @@ public class UserServices {
 			return allocationBean.getAllocatedResourcesIds();
 		}else{
 			Map<String, Integer> allIdle = userDao.getIdleCollector();
-			return allocateIdle(allIdle, Integer.parseInt(quantity)).size()>0?allocateIdle(allIdle, Integer.parseInt(quantity)):null;			
+			List<String> allocateIdle = allocateIdle(allIdle, Integer.parseInt(quantity));
+			return allocateIdle.size()>0?allocateIdle:null;			
 		}
 		
 	}
@@ -162,6 +163,7 @@ public class UserServices {
 				}
 				lastKey = key;
 			}
+			System.out.println("is found"+isFound);
 			if (!isFound) {															//If the single node is not capable then this block will devide it by assigning the most capable collector and removing it from collector list
 				System.out.println(collector.lastEntry());
 				allocatedResources.add(lastKey);
